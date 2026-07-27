@@ -9,7 +9,10 @@ export type BackgroundStyle =
   | 'matrix' 
   | 'starfield' 
   | 'waveform' 
-  | 'circuit';
+  | 'circuit'
+  | 'vortex'
+  | 'hexgrid'
+  | 'raindrops';
 
 interface BackgroundEffectsProps {
   theme?: 'dark' | 'light';
@@ -48,6 +51,15 @@ interface CircuitTrace {
   dir: 'h' | 'v';
   progress: number;
   speed: number;
+  color: string;
+}
+
+interface Ripple {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  alpha: number;
   color: string;
 }
 
@@ -154,12 +166,27 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
       });
     }
 
+    // Setup for Rain Ripples
+    const ripples: Ripple[] = [];
+
     let mouseX = -1000;
     let mouseY = -1000;
 
     const handleCanvasMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
+
+      if (bgStyle === 'raindrops' && Math.random() > 0.6) {
+        const brandColor = sakodePalette[Math.floor(Math.random() * sakodePalette.length)];
+        ripples.push({
+          x: e.clientX,
+          y: e.clientY,
+          radius: 2,
+          maxRadius: Math.random() * 35 + 25,
+          alpha: 0.8,
+          color: brandColor.hex,
+        });
+      }
     };
 
     window.addEventListener('mousemove', handleCanvasMouseMove);
@@ -323,7 +350,6 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
           const ex = c.dir === 'h' ? c.x + c.length : c.x;
           const ey = c.dir === 'h' ? c.y : c.y + c.length;
 
-          // Draw main circuit line
           ctx.beginPath();
           ctx.moveTo(c.x, c.y);
           ctx.lineTo(ex, ey);
@@ -331,7 +357,6 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
           ctx.lineWidth = 1.5;
           ctx.stroke();
 
-          // Draw moving pulse electron
           const px = c.dir === 'h' ? c.x + c.length * c.progress : c.x;
           const py = c.dir === 'h' ? c.y : c.y + c.length * c.progress;
 
@@ -342,6 +367,102 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
           ctx.shadowColor = c.color;
           ctx.shadowBlur = 8;
           ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // --- Style 6: Galactic Spiral Vortex ---
+      if (bgStyle === 'vortex') {
+        const vRadius = 180;
+        const pCount = 60;
+        for (let i = 0; i < pCount; i++) {
+          const angle = time * 0.8 + (i * Math.PI * 2) / pCount;
+          const r = (vRadius * (i + 1)) / pCount;
+          const px = mouseX + Math.cos(angle) * r;
+          const py = mouseY + Math.sin(angle) * r;
+
+          const color = sakodePalette[i % sakodePalette.length].hex;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.shadowColor = color;
+          ctx.shadowBlur = 8;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // --- Style 7: Cyber Hexagonal Hive ---
+      if (bgStyle === 'hexgrid') {
+        const hexSize = 30;
+        const hexWidth = hexSize * Math.sqrt(3);
+        const hexHeight = hexSize * 2;
+        const cols = Math.ceil(canvas.width / hexWidth) + 1;
+        const rows = Math.ceil(canvas.height / (hexHeight * 0.75)) + 1;
+
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            const hx = c * hexWidth + (r % 2 === 1 ? hexWidth / 2 : 0);
+            const hy = r * hexHeight * 0.75;
+            const dist = Math.hypot(hx - mouseX, hy - mouseY);
+
+            if (dist < 220) {
+              const alpha = (1 - dist / 220) * 0.6;
+              ctx.beginPath();
+              for (let a = 0; a < 6; a++) {
+                const angle = (Math.PI / 3) * a;
+                const px = hx + Math.cos(angle) * (hexSize - 2);
+                const py = hy + Math.sin(angle) * (hexSize - 2);
+                if (a === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+              }
+              ctx.closePath();
+              ctx.strokeStyle = isLight
+                ? `rgba(0, 150, 112, ${alpha})`
+                : `rgba(113, 207, 254, ${alpha})`;
+              ctx.lineWidth = 1.2;
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      // --- Style 8: Neon Rain Ripples ---
+      if (bgStyle === 'raindrops') {
+        // Random ambient drops
+        if (Math.random() > 0.92) {
+          const brandColor = sakodePalette[Math.floor(Math.random() * sakodePalette.length)];
+          ripples.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: 2,
+            maxRadius: Math.random() * 40 + 20,
+            alpha: 0.75,
+            color: brandColor.hex,
+          });
+        }
+
+        for (let i = ripples.length - 1; i >= 0; i--) {
+          const rip = ripples[i];
+          rip.radius += 0.8;
+          rip.alpha = 0.75 * (1 - rip.radius / rip.maxRadius);
+
+          if (rip.alpha <= 0 || rip.radius >= rip.maxRadius) {
+            ripples.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(rip.x, rip.y, rip.radius, 0, Math.PI * 2);
+          ctx.strokeStyle = rip.color;
+          ctx.shadowColor = rip.color;
+          ctx.shadowBlur = 6;
+          ctx.globalAlpha = rip.alpha;
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
           ctx.restore();
         }
       }
@@ -409,8 +530,8 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
         </div>
       )}
 
-      {/* Canvas for Constellation, Matrix, Starfield, Waveform, & Circuit */}
-      {(bgStyle === 'constellation' || bgStyle === 'matrix' || bgStyle === 'starfield' || bgStyle === 'waveform' || bgStyle === 'circuit') && (
+      {/* Canvas for Constellation, Matrix, Starfield, Waveform, Circuit, Vortex, Hexgrid, & Raindrops */}
+      {(bgStyle === 'constellation' || bgStyle === 'matrix' || bgStyle === 'starfield' || bgStyle === 'waveform' || bgStyle === 'circuit' || bgStyle === 'vortex' || bgStyle === 'hexgrid' || bgStyle === 'raindrops') && (
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full h-full pointer-events-none"

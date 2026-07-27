@@ -12,7 +12,9 @@ import {
   Code, 
   Eye, 
   Droplet, 
-  Star 
+  Star,
+  Flame,
+  Disc
 } from 'lucide-react';
 import { CursorStyle } from './CustomCursor';
 
@@ -36,6 +38,12 @@ export function CursorModal({
   const isLight = theme === 'light';
 
   const options: { id: CursorStyle; title: string; desc: string; icon: React.ReactNode }[] = [
+    {
+      id: 'lens',
+      title: 'Magnifier Glass (Default)',
+      desc: 'Lensa spotlight melingkar dengan efek kaca pembesar & warna terbalik',
+      icon: <Eye className="w-4 h-4 text-purple-500" />,
+    },
     {
       id: 'meteor',
       title: 'Meteor Glow',
@@ -61,12 +69,6 @@ export function CursorModal({
       icon: <Droplet className="w-4 h-4 text-sky-500" />,
     },
     {
-      id: 'lens',
-      title: 'Magnifier Glass',
-      desc: 'Lensa spotlight melingkar dengan efek kaca pembesar & warna terbalik',
-      icon: <Eye className="w-4 h-4 text-purple-500" />,
-    },
-    {
       id: 'code',
       title: 'Sakode Symbol </ >',
       desc: 'Ikon simbol koding khas Sakode Academy melayang mengikutimu',
@@ -77,6 +79,18 @@ export function CursorModal({
       title: 'Starry Dust Wand',
       desc: 'Taburan bintang emas berpendar melayang di belakang kursor',
       icon: <Star className="w-4 h-4 text-amber-500" />,
+    },
+    {
+      id: 'comet',
+      title: 'Fire Comet Trail',
+      desc: 'Ekor komest api merah-oranye Sakode menyembur dari kursor',
+      icon: <Flame className="w-4 h-4 text-orange-500" />,
+    },
+    {
+      id: 'target',
+      title: 'Radar Sonar Target',
+      desc: 'Denyut radar sonar melingkar berpulsasi mengelilingi titik kursor',
+      icon: <Disc className="w-4 h-4 text-cyan-400" />,
     },
     {
       id: 'default',
@@ -118,7 +132,7 @@ export function CursorModal({
               <div>
                 <h2 className="text-base font-bold">Gaya Kursor Desktop</h2>
                 <p className={`text-xs ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  8 Pilihan Kursor Interaktif
+                  10 Pilihan Kursor Interaktif
                 </p>
               </div>
             </div>

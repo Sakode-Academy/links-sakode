@@ -3,13 +3,15 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 export type CursorStyle = 
+  | 'lens' 
   | 'meteor' 
   | 'minimal' 
   | 'crosshair' 
   | 'blob' 
-  | 'lens' 
   | 'code' 
   | 'sparkles' 
+  | 'comet'
+  | 'target'
   | 'default';
 
 interface CustomCursorProps {
@@ -28,7 +30,7 @@ interface Particle {
   life: number;
   maxLife: number;
   color: string;
-  type?: 'dot' | 'star';
+  type?: 'dot' | 'star' | 'fire';
   rotation?: number;
 }
 
@@ -76,6 +78,7 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
       : ['#10b981', '#06b6d4', '#3b82f6', '#f59e0b', '#ec4899'];
 
     const starColors = ['#f59e0b', '#fbbf24', '#fef08a', '#10b981', '#ec4899'];
+    const fireColors = ['#f9723b', '#f94052', '#edac1c', '#ff409f'];
 
     const handleMouseMove = (e: MouseEvent) => {
       setVisible(true);
@@ -135,6 +138,27 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
         }
       }
 
+      // Particles for 'comet'
+      if (cursorStyle === 'comet') {
+        const count = Math.min(Math.floor(dist / 2) + 1, 6);
+        for (let i = 0; i < count; i++) {
+          const color = fireColors[Math.floor(Math.random() * fireColors.length)];
+          particles.push({
+            x: e.clientX + (Math.random() - 0.5) * 6,
+            y: e.clientY + (Math.random() - 0.5) * 6,
+            vx: -dx * 0.15 + (Math.random() - 0.5) * 0.8,
+            vy: -dy * 0.15 + (Math.random() - 0.5) * 0.8,
+            size: Math.random() * 5 + 3,
+            maxSize: Math.random() * 5 + 3,
+            alpha: 0.9,
+            life: 0,
+            maxLife: Math.random() * 15 + 10,
+            color,
+            type: 'fire',
+          });
+        }
+      }
+
       // Check hover
       const target = e.target as HTMLElement | null;
       if (target) {
@@ -152,7 +176,7 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
     window.addEventListener('mouseup', handleMouseUp);
 
     const render = () => {
-      if (ctx && canvas && (cursorStyle === 'meteor' || cursorStyle === 'sparkles')) {
+      if (ctx && canvas && (cursorStyle === 'meteor' || cursorStyle === 'sparkles' || cursorStyle === 'comet')) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         for (let i = particles.length - 1; i >= 0; i--) {
@@ -187,7 +211,7 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
           } else {
             ctx.fillStyle = p.color;
             ctx.shadowColor = p.color;
-            ctx.shadowBlur = 6;
+            ctx.shadowBlur = p.type === 'fire' ? 10 : 6;
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
             ctx.fill();
@@ -220,7 +244,7 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
   return (
     <>
       {/* Particle Canvas */}
-      {(cursorStyle === 'meteor' || cursorStyle === 'sparkles') && (
+      {(cursorStyle === 'meteor' || cursorStyle === 'sparkles' || cursorStyle === 'comet') && (
         <canvas
           ref={canvasRef}
           className="fixed inset-0 pointer-events-none z-[99999]"
@@ -229,28 +253,32 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
 
       {visible && (
         <>
-          {/* Main Pointer Dot (for meteor, minimal, sparkles) */}
-          {(cursorStyle === 'meteor' || cursorStyle === 'minimal' || cursorStyle === 'sparkles') && (
+          {/* Main Pointer Dot */}
+          {(cursorStyle === 'meteor' || cursorStyle === 'minimal' || cursorStyle === 'sparkles' || cursorStyle === 'comet') && (
             <div
               style={{
                 transform: `translate3d(${pos.x - 4}px, ${pos.y - 4}px, 0) scale(${isClicked ? 0.6 : isHovered ? 1.4 : 1})`,
               }}
               className={`fixed top-0 left-0 w-2 h-2 rounded-full pointer-events-none z-[99999] transition-transform duration-75 ease-out ${
-                isLight ? 'bg-emerald-600' : 'bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.9)]'
+                cursorStyle === 'comet'
+                  ? 'bg-amber-400 shadow-[0_0_12px_rgba(249,114,59,0.9)]'
+                  : isLight ? 'bg-emerald-600' : 'bg-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.9)]'
               }`}
             />
           )}
 
-          {/* Follower Ring for Meteor & Minimal */}
-          {(cursorStyle === 'meteor' || cursorStyle === 'minimal') && (
+          {/* Follower Ring for Meteor, Minimal, Comet */}
+          {(cursorStyle === 'meteor' || cursorStyle === 'minimal' || cursorStyle === 'comet') && (
             <div
               style={{
                 transform: `translate3d(${pos.x - 16}px, ${pos.y - 16}px, 0) scale(${isClicked ? 0.8 : isHovered ? 1.5 : 1})`,
-                borderColor: isHovered 
-                  ? isLight ? 'rgba(5, 150, 105, 0.85)' : 'rgba(16, 185, 129, 0.85)'
-                  : isLight ? 'rgba(39, 39, 42, 0.4)' : 'rgba(255, 255, 255, 0.4)',
+                borderColor: cursorStyle === 'comet'
+                  ? 'rgba(249, 114, 59, 0.8)'
+                  : isHovered 
+                    ? isLight ? 'rgba(5, 150, 105, 0.85)' : 'rgba(16, 185, 129, 0.85)'
+                    : isLight ? 'rgba(39, 39, 42, 0.4)' : 'rgba(255, 255, 255, 0.4)',
                 backgroundColor: isHovered
-                  ? isLight ? 'rgba(5, 150, 105, 0.08)' : 'rgba(16, 185, 129, 0.08)'
+                  ? cursorStyle === 'comet' ? 'rgba(249, 114, 59, 0.1)' : isLight ? 'rgba(5, 150, 105, 0.08)' : 'rgba(16, 185, 129, 0.08)'
                   : 'transparent',
               }}
               className="fixed top-0 left-0 w-8 h-8 rounded-full border pointer-events-none z-[99999] transition-all duration-150 ease-out"
@@ -338,6 +366,20 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
               className="fixed top-0 left-0 w-6 h-6 rounded-full border border-amber-400/60 pointer-events-none z-[99999] transition-transform duration-100 ease-out flex items-center justify-center"
             >
               <div className="w-1.5 h-1.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
+            </div>
+          )}
+
+          {/* Radar Sonar Target */}
+          {cursorStyle === 'target' && (
+            <div
+              style={{
+                transform: `translate3d(${pos.x - 18}px, ${pos.y - 18}px, 0) scale(${isClicked ? 0.7 : isHovered ? 1.4 : 1})`,
+              }}
+              className={`fixed top-0 left-0 w-9 h-9 rounded-full border-2 border-dashed pointer-events-none z-[99999] animate-spin flex items-center justify-center ${
+                isLight ? 'border-cyan-600' : 'border-cyan-400 shadow-[0_0_12px_rgba(6,182,212,0.6)]'
+              }`}
+            >
+              <div className="w-2 h-2 rounded-full bg-cyan-400" />
             </div>
           )}
         </>

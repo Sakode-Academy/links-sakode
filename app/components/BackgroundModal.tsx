@@ -11,7 +11,10 @@ import {
   Palette, 
   Orbit, 
   Activity, 
-  Cpu 
+  Cpu,
+  Compass,
+  Hexagon,
+  CloudRain
 } from 'lucide-react';
 import { BackgroundStyle } from './BackgroundEffects';
 
@@ -37,7 +40,7 @@ export function BackgroundModal({
   const options: { id: BackgroundStyle; title: string; desc: string; icon: React.ReactNode }[] = [
     {
       id: 'constellation',
-      title: 'Sakode Constellation Web',
+      title: 'Sakode Constellation Web (Default)',
       desc: 'Jaringan partikel laser tebal berpendar warna-warni palet Sakode Academy',
       icon: <Network className="w-4 h-4 text-emerald-400" />,
     },
@@ -77,6 +80,24 @@ export function BackgroundModal({
       desc: 'Jalur sirkuit elektronik PCB dengan denyut elektron berpendar',
       icon: <Cpu className="w-4 h-4 text-blue-400" />,
     },
+    {
+      id: 'vortex',
+      title: 'Galactic Spiral Vortex',
+      desc: 'Pusaran galaksi partikel spiral berputar mengelilingi koordinat mouse',
+      icon: <Compass className="w-4 h-4 text-emerald-400" />,
+    },
+    {
+      id: 'hexgrid',
+      title: 'Cyber Hexagonal Hive',
+      desc: 'Sarang lebah heksagonal futuristik yang menyala terang saat disorot',
+      icon: <Hexagon className="w-4 h-4 text-cyan-400" />,
+    },
+    {
+      id: 'raindrops',
+      title: 'Neon Rain Ripples',
+      desc: 'Riak air hujan neon menyebar secara acak & bereaksi pada gerakan mouse',
+      icon: <CloudRain className="w-4 h-4 text-pink-400" />,
+    },
   ];
 
   return (
@@ -111,7 +132,7 @@ export function BackgroundModal({
               <div>
                 <h2 className="text-base font-bold">Gaya Latar Belakang</h2>
                 <p className={`text-xs ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  7 Efek Latar Interaktif
+                  10 Efek Latar Interaktif
                 </p>
               </div>
             </div>
