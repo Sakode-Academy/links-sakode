@@ -23,7 +23,6 @@ export function MeteorCursor({ theme = 'dark' }: MeteorCursorProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    // Enable only for desktop / pointer fine devices
     if (typeof window === 'undefined' || !window.matchMedia('(pointer: fine)').matches) {
       return;
     }
@@ -35,8 +34,8 @@ export function MeteorCursor({ theme = 'dark' }: MeteorCursorProps) {
     if (!ctx) return;
 
     let animId: number;
-    let particles: Particle[] = [];
-    let mouse = { x: -100, y: -100, lastX: -100, lastY: -100 };
+    const particles: Particle[] = [];
+    const mouse = { x: -100, y: -100, lastX: -100, lastY: -100 };
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -60,7 +59,6 @@ export function MeteorCursor({ theme = 'dark' }: MeteorCursorProps) {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
 
-      // Spawn meteor tail particles on movement
       const count = Math.min(Math.floor(dist / 3) + 1, 6);
       for (let i = 0; i < count; i++) {
         const angle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.5;

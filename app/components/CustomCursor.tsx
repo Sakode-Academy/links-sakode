@@ -42,8 +42,8 @@ export function CustomCursor({ theme = 'dark' }: CustomCursorProps) {
     if (!ctx) return;
 
     let animId: number;
-    let particles: Particle[] = [];
-    let mouse = { x: -100, y: -100 };
+    const particles: Particle[] = [];
+    const mouse = { x: -100, y: -100 };
 
     const resize = () => {
       canvas.width = window.innerWidth;

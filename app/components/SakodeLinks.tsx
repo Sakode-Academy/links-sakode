@@ -24,6 +24,10 @@ import { QrModal } from './QrModal';
 import { BackgroundEffects } from './BackgroundEffects';
 import { CustomCursor } from './CustomCursor';
 
+interface DocumentWithViewTransition {
+  startViewTransition?: (callback: () => void) => { ready: Promise<void> };
+}
+
 type ThemeMode = 'dark' | 'light';
 
 export function SakodeLinks() {
@@ -42,13 +46,15 @@ export function SakodeLinks() {
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
 
-    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
+    const doc = typeof document !== 'undefined' ? (document as DocumentWithViewTransition) : null;
+
+    if (doc?.startViewTransition) {
       const endRadius = Math.hypot(
         Math.max(x, window.innerWidth - x),
         Math.max(y, window.innerHeight - y)
       );
 
-      const transition = (document as any).startViewTransition(() => {
+      const transition = doc.startViewTransition(() => {
         setTheme(targetTheme);
       });
 
