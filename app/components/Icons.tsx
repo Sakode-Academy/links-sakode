@@ -41,19 +41,16 @@ export function EmailIcon({ className = "w-6 h-6" }: { className?: string }) {
   );
 }
 
-export function SakodeLogoSvg({ className = "w-48 h-auto" }: { className?: string }) {
+export function SakodeLogoSvg({ className = "w-64 h-auto" }: { className?: string }) {
   return (
-    <div className={`relative flex items-center justify-center group ${className}`}>
-      <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-pink-500/20 to-emerald-500/30 rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition-opacity animate-pulse"></div>
-      <div className="relative w-full h-full bg-slate-950/80 border border-slate-800/80 backdrop-blur-xl rounded-3xl px-6 py-4 flex items-center justify-center shadow-2xl overflow-hidden">
-        <div className="absolute -inset-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-1000 ease-in-out"></div>
+    <div className={`relative flex items-center justify-center ${className}`}>
+      <div className="w-full h-full bg-zinc-900 border border-zinc-800 rounded-2xl px-6 py-4 flex items-center justify-center shadow-lg">
         <img 
           src="/logo/sakode.svg" 
-          alt="Sakode Academy Logo Official" 
-          className="w-full h-auto max-h-16 object-contain drop-shadow-[0_0_15px_rgba(255,255,255,0.25)]"
+          alt="Sakode Academy Logo" 
+          className="w-full h-auto max-h-16 object-contain"
         />
       </div>
     </div>
   );
 }
-
