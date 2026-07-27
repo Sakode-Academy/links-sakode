@@ -41,10 +41,14 @@ export function EmailIcon({ className = "w-6 h-6" }: { className?: string }) {
   );
 }
 
-export function SakodeLogoSvg({ className = "w-64 h-auto" }: { className?: string }) {
+export function SakodeLogoSvg({ className = "w-64 h-auto", theme = "dark" }: { className?: string; theme?: "dark" | "light" }) {
+  const containerStyle = theme === "light"
+    ? "bg-zinc-900 border-zinc-800 shadow-md"
+    : "bg-zinc-900 border-zinc-800 shadow-lg";
+
   return (
     <div className={`relative flex items-center justify-center ${className}`}>
-      <div className="w-full h-full bg-zinc-900 border border-zinc-800 rounded-2xl px-6 py-4 flex items-center justify-center shadow-lg">
+      <div className={`w-full h-full rounded-2xl px-6 py-4 flex items-center justify-center transition-colors ${containerStyle}`}>
         <img 
           src="/logo/sakode.svg" 
           alt="Sakode Academy Logo" 

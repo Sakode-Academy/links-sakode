@@ -9,13 +9,17 @@ interface QrModalProps {
   isOpen: boolean;
   onClose: () => void;
   currentUrl?: string;
+  theme?: 'dark' | 'light';
 }
 
-export function QrModal({ isOpen, onClose, currentUrl }: QrModalProps) {
+export function QrModal({ isOpen, onClose, currentUrl, theme = 'dark' }: QrModalProps) {
   const [copied, setCopied] = useState(false);
   const pageUrl = currentUrl || (typeof window !== 'undefined' ? window.location.href : 'https://sakode.academy/links');
+  const isLight = theme === 'light';
 
-  const qrSvgData = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pageUrl)}&color=ffffff&bgcolor=09090b`;
+  const qrColor = isLight ? '18181b' : 'ffffff';
+  const qrBgColor = isLight ? 'ffffff' : '09090b';
+  const qrSvgData = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(pageUrl)}&color=${qrColor}&bgcolor=${qrBgColor}`;
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(pageUrl);
@@ -43,7 +47,7 @@ export function QrModal({ isOpen, onClose, currentUrl }: QrModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
           />
 
           {/* Modal Content */}
@@ -52,26 +56,38 @@ export function QrModal({ isOpen, onClose, currentUrl }: QrModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 15 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-sm bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-2xl text-zinc-100 z-10 text-center"
+            className={`relative w-full max-w-sm rounded-2xl p-6 shadow-2xl z-10 text-center ${
+              isLight ? 'bg-white border border-zinc-200 text-zinc-900' : 'bg-zinc-900 border border-zinc-800 text-zinc-100'
+            }`}
           >
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+              className={`absolute top-4 right-4 p-2 rounded-xl transition-colors cursor-pointer ${
+                isLight ? 'bg-zinc-100 hover:bg-zinc-200 text-zinc-500 hover:text-zinc-900' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white'
+              }`}
               aria-label="Tutup Modal QR"
             >
               <X className="w-4 h-4" />
             </button>
 
             {/* Title */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-800 border border-zinc-700 text-zinc-300 text-xs font-semibold mb-3">
-              <QrCode className="w-3.5 h-3.5 text-emerald-400" /> Sakode QR Code
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-3 ${
+              isLight ? 'bg-zinc-100 border border-zinc-200 text-zinc-700' : 'bg-zinc-800 border border-zinc-700 text-zinc-300'
+            }`}>
+              <QrCode className="w-3.5 h-3.5 text-emerald-500" /> Sakode QR Code
             </div>
-            <h3 className="text-base font-bold text-white mb-1">Scan & Bagikan Link</h3>
-            <p className="text-xs text-zinc-400 mb-5">Pindai kode QR di bawah untuk membuka halaman di perangkat seluler.</p>
+            <h3 className={`text-base font-bold mb-1 ${isLight ? 'text-zinc-900' : 'text-white'}`}>
+              Scan & Bagikan Link
+            </h3>
+            <p className={`text-xs mb-5 ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
+              Pindai kode QR di bawah untuk membuka halaman di perangkat seluler.
+            </p>
 
             {/* QR Card Frame */}
-            <div className="relative mx-auto w-52 h-52 p-3 bg-zinc-950 border border-zinc-800 rounded-xl shadow-lg flex items-center justify-center mb-5">
+            <div className={`relative mx-auto w-52 h-52 p-3 rounded-xl border shadow-sm flex items-center justify-center mb-5 ${
+              isLight ? 'bg-white border-zinc-200' : 'bg-zinc-950 border-zinc-800'
+            }`}>
               <img
                 src={qrSvgData}
                 alt="QR Code Sakode Academy"
@@ -83,16 +99,18 @@ export function QrModal({ isOpen, onClose, currentUrl }: QrModalProps) {
             <div className="space-y-2">
               <button
                 onClick={handleCopyLink}
-                className="w-full py-2.5 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-xs font-semibold text-white flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
+                className={`w-full py-2.5 px-4 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 ${
+                  isLight ? 'bg-zinc-100 hover:bg-zinc-200 border-zinc-300 text-zinc-800' : 'bg-zinc-800 hover:bg-zinc-700 border-zinc-700 text-white'
+                }`}
               >
                 {copied ? (
                   <>
-                    <Check className="w-4 h-4 text-emerald-400" />
-                    <span className="text-emerald-400">Tautan Berhasil Disalin</span>
+                    <Check className="w-4 h-4 text-emerald-500" />
+                    <span className="text-emerald-500 font-medium">Tautan Berhasil Disalin</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-4 h-4 text-zinc-400" />
+                    <Copy className="w-4 h-4 text-zinc-500" />
                     <span>Salin Alamat Halaman (URL)</span>
                   </>
                 )}
@@ -100,7 +118,7 @@ export function QrModal({ isOpen, onClose, currentUrl }: QrModalProps) {
 
               <button
                 onClick={handleShareWa}
-                className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95"
+                className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-95 shadow-sm"
               >
                 <Share2 className="w-4 h-4" />
                 <span>Bagikan ke WhatsApp</span>
