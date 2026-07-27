@@ -16,13 +16,15 @@ import {
   Video,
   Globe,
   Mail,
-  Send
+  Send,
+  MousePointer
 } from 'lucide-react';
 import { WhatsappIcon, InstagramIcon, TiktokIcon, WebsiteIcon, EmailIcon, SakodeLogoSvg } from './Icons';
 import { WebsiteStatusModal } from './WebsiteStatusModal';
 import { QrModal } from './QrModal';
+import { CursorModal } from './CursorModal';
 import { BackgroundEffects } from './BackgroundEffects';
-import { CustomCursor } from './CustomCursor';
+import { CustomCursor, CursorStyle } from './CustomCursor';
 
 interface DocumentWithViewTransition {
   startViewTransition?: (callback: () => void) => { ready: Promise<void> };
@@ -32,8 +34,10 @@ type ThemeMode = 'dark' | 'light';
 
 export function SakodeLinks() {
   const [theme, setTheme] = useState<ThemeMode>('dark');
+  const [cursorStyle, setCursorStyle] = useState<CursorStyle>('meteor');
   const [websiteModalOpen, setWebsiteModalOpen] = useState<boolean>(false);
   const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
+  const [cursorModalOpen, setCursorModalOpen] = useState<boolean>(false);
   const [copiedPage, setCopiedPage] = useState<boolean>(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
@@ -120,8 +124,8 @@ export function SakodeLinks() {
         isLight ? 'bg-zinc-100 text-zinc-900' : 'bg-zinc-950 text-zinc-100'
       }`}
     >
-      {/* Custom Cursor + Meteor Trail */}
-      <CustomCursor theme={theme} />
+      {/* Custom Cursor + Meteor Trail (Z-Index 99999 in front of modals) */}
+      <CustomCursor theme={theme} cursorStyle={cursorStyle} />
 
       {/* Background Grid */}
       {!isLight && <BackgroundEffects />}
@@ -178,6 +182,21 @@ export function SakodeLinks() {
 
           {/* Quick Actions */}
           <div className="flex items-center gap-2">
+            <motion.button
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.94 }}
+              onClick={() => setCursorModalOpen(true)}
+              className={`p-2.5 rounded-xl border transition-colors duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-medium ${
+                isLight 
+                  ? 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 shadow-sm' 
+                  : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white'
+              }`}
+              title="Ganti Gaya Kursor"
+            >
+              <MousePointer className="w-4 h-4 text-emerald-500" />
+              <span className="hidden sm:inline">Kursor</span>
+            </motion.button>
+
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.94 }}
@@ -522,6 +541,14 @@ export function SakodeLinks() {
       <QrModal
         isOpen={qrModalOpen}
         onClose={() => setQrModalOpen(false)}
+        theme={theme}
+      />
+
+      <CursorModal
+        isOpen={cursorModalOpen}
+        onClose={() => setCursorModalOpen(false)}
+        cursorStyle={cursorStyle}
+        onSelectCursor={(newStyle) => setCursorStyle(newStyle)}
         theme={theme}
       />
 
