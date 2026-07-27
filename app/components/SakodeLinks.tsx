@@ -18,7 +18,6 @@ import {
   Mail,
   Send
 } from 'lucide-react';
-import confetti from 'canvas-confetti';
 import { SAKODE_LINKS, SakodeLink } from '../data/links';
 import { WhatsappIcon, InstagramIcon, TiktokIcon, WebsiteIcon, EmailIcon, SakodeLogoSvg } from './Icons';
 import { WebsiteStatusModal } from './WebsiteStatusModal';
@@ -36,6 +35,43 @@ export function SakodeLinks() {
 
   const isLight = theme === 'light';
 
+  const handleThemeSwitch = (targetTheme: ThemeMode, e: React.MouseEvent<HTMLButtonElement>) => {
+    if (targetTheme === theme) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    // Zero-blank View Transition from button origin
+    if (typeof document !== 'undefined' && 'startViewTransition' in document) {
+      const endRadius = Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y)
+      );
+
+      const transition = (document as any).startViewTransition(() => {
+        setTheme(targetTheme);
+      });
+
+      transition.ready.then(() => {
+        document.documentElement.animate(
+          [
+            { clipPath: `circle(0px at ${x}px ${y}px)` },
+            { clipPath: `circle(${endRadius}px at ${x}px ${y}px)` }
+          ],
+          {
+            duration: 450,
+            easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+            pseudoElement: '::view-transition-new(root)'
+          }
+        );
+      });
+    } else {
+      // Instant direct swap fallback (no blank moment)
+      setTheme(targetTheme);
+    }
+  };
+
   const showToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 2500);
@@ -46,16 +82,15 @@ export function SakodeLinks() {
     navigator.clipboard.writeText(url);
     setCopiedPage(true);
     showToast('Tautan halaman Sakode Academy berhasil disalin');
-    confetti({ particleCount: 35, spread: 50, origin: { y: 0.8 } });
     setTimeout(() => setCopiedPage(false), 2000);
   };
 
   return (
-    <div className={`min-h-screen w-full relative overflow-x-hidden font-sans transition-colors duration-300 ${
-      isLight 
-        ? 'bg-zinc-50 text-zinc-900 selection:bg-emerald-500 selection:text-white' 
-        : 'bg-zinc-950 text-zinc-100 selection:bg-emerald-500 selection:text-zinc-950'
-    }`}>
+    <div
+      className={`min-h-screen w-full relative overflow-x-hidden font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-300 ${
+        isLight ? 'bg-zinc-100 text-zinc-900' : 'bg-zinc-950 text-zinc-100'
+      }`}
+    >
       
       {/* Background Grid */}
       {!isLight && <BackgroundEffects />}
@@ -64,35 +99,51 @@ export function SakodeLinks() {
         
         {/* Top Control Dock */}
         <div className="w-full flex items-center justify-between mb-8 px-1">
-          {/* Theme Switcher */}
-          <div className={`flex items-center gap-1 p-1 rounded-xl border ${
+          
+          {/* Theme Switcher Dock */}
+          <div className={`relative flex items-center p-1 rounded-xl border transition-colors duration-300 ${
             isLight ? 'bg-white border-zinc-200 shadow-sm' : 'bg-zinc-900 border-zinc-800'
           }`}>
             <button
-              onClick={() => setTheme('dark')}
-              className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-                !isLight ? 'bg-zinc-800 text-white shadow-sm' : 'text-zinc-400 hover:text-zinc-900'
+              onClick={(e) => handleThemeSwitch('dark', e)}
+              className={`relative z-10 p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                !isLight ? 'text-white' : 'text-zinc-400 hover:text-zinc-900'
               }`}
               title="Mode Gelap"
             >
               <Moon className="w-3.5 h-3.5" />
             </button>
+
             <button
-              onClick={() => setTheme('light')}
-              className={`p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-                isLight ? 'bg-zinc-100 text-zinc-900 shadow-sm' : 'text-zinc-400 hover:text-white'
+              onClick={(e) => handleThemeSwitch('light', e)}
+              className={`relative z-10 p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
+                isLight ? 'text-zinc-900' : 'text-zinc-400 hover:text-white'
               }`}
               title="Mode Terang"
             >
               <Sun className="w-3.5 h-3.5 text-amber-500" />
             </button>
+
+            {/* Sliding Pill Indicator */}
+            <motion.div
+              layoutId="themePill"
+              initial={false}
+              animate={{
+                x: isLight ? 32 : 0
+              }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              className={`absolute top-1 left-1 bottom-1 w-7 rounded-lg shadow-sm ${
+                isLight ? 'bg-zinc-100' : 'bg-zinc-800'
+              }`}
+            />
           </div>
 
           {/* Quick Actions */}
           <div className="flex items-center gap-2">
-            <button
+            <motion.button
+              whileTap={{ scale: 0.95 }}
               onClick={() => setQrModalOpen(true)}
-              className={`p-2.5 rounded-xl border transition-all cursor-pointer active:scale-95 flex items-center gap-1.5 text-xs font-medium ${
+              className={`p-2.5 rounded-xl border transition-colors duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-medium ${
                 isLight 
                   ? 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 shadow-sm' 
                   : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white'
@@ -101,11 +152,12 @@ export function SakodeLinks() {
             >
               <QrCode className="w-4 h-4 text-emerald-500" />
               <span className="hidden sm:inline">QR Code</span>
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileTap={{ scale: 0.95 }}
               onClick={handleCopyPageLink}
-              className={`p-2.5 rounded-xl border transition-all cursor-pointer active:scale-95 flex items-center gap-1.5 text-xs font-medium ${
+              className={`p-2.5 rounded-xl border transition-colors duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-medium ${
                 isLight 
                   ? 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 shadow-sm' 
                   : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white'
@@ -114,7 +166,7 @@ export function SakodeLinks() {
             >
               {copiedPage ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4 text-zinc-500" />}
               <span className="hidden sm:inline">{copiedPage ? 'Tersalin' : 'Bagikan'}</span>
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -152,13 +204,14 @@ export function SakodeLinks() {
           {/* WhatsApp Card */}
           <motion.a
             whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
             href="https://wa.me/message/UTMRQNH4ERNBM1"
             target="_blank"
             rel="noopener noreferrer"
-            className={`block w-full p-4 rounded-xl border transition-all group ${
+            className={`block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
               isLight 
-                ? 'bg-white border-zinc-200 hover:border-emerald-500/50 hover:shadow-md text-zinc-900' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700 text-zinc-100 shadow-sm'
+                ? 'bg-white border-zinc-200 hover:border-emerald-500/50 hover:shadow-md' 
+                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
             }`}
           >
             <div className="flex items-center justify-between gap-3">
@@ -187,7 +240,7 @@ export function SakodeLinks() {
               <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
                 isLight ? 'text-zinc-400 group-hover:text-emerald-600' : 'text-zinc-400 group-hover:text-emerald-400'
               }`}>
-                <ArrowUpRight className="w-4 h-4" />
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </div>
             </div>
           </motion.a>
@@ -195,13 +248,14 @@ export function SakodeLinks() {
           {/* Instagram Card */}
           <motion.a
             whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
             href="https://www.instagram.com/sakodeacademy?igsh=MWZiNmR3ODU4NG12ZA=="
             target="_blank"
             rel="noopener noreferrer"
-            className={`block w-full p-4 rounded-xl border transition-all group ${
+            className={`block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
               isLight 
-                ? 'bg-white border-zinc-200 hover:border-pink-500/50 hover:shadow-md text-zinc-900' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700 text-zinc-100 shadow-sm'
+                ? 'bg-white border-zinc-200 hover:border-pink-500/50 hover:shadow-md' 
+                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
             }`}
           >
             <div className="flex items-center justify-between gap-3">
@@ -230,7 +284,7 @@ export function SakodeLinks() {
               <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
                 isLight ? 'text-zinc-400 group-hover:text-pink-600' : 'text-zinc-400 group-hover:text-pink-400'
               }`}>
-                <ArrowUpRight className="w-4 h-4" />
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </div>
             </div>
           </motion.a>
@@ -238,11 +292,12 @@ export function SakodeLinks() {
           {/* Website Portal Special Action Card */}
           <motion.div
             whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setWebsiteModalOpen(true)}
-            className={`w-full p-4 rounded-xl border transition-all cursor-pointer group ${
+            className={`w-full p-4 rounded-xl border transition-colors duration-300 cursor-pointer group shadow-sm ${
               isLight 
-                ? 'bg-white border-zinc-200 hover:border-cyan-500/50 hover:shadow-md text-zinc-900' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700 text-zinc-100 shadow-sm'
+                ? 'bg-white border-zinc-200 hover:border-cyan-500/50 hover:shadow-md' 
+                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
             }`}
           >
             <div className="flex items-center justify-between gap-3">
@@ -279,13 +334,14 @@ export function SakodeLinks() {
           {/* TikTok Card */}
           <motion.a
             whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
             href="https://vm.tiktok.com/ZS9r7LeLjdhWX-yvCBH/"
             target="_blank"
             rel="noopener noreferrer"
-            className={`block w-full p-4 rounded-xl border transition-all group ${
+            className={`block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
               isLight 
-                ? 'bg-white border-zinc-200 hover:border-sky-500/50 hover:shadow-md text-zinc-900' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700 text-zinc-100 shadow-sm'
+                ? 'bg-white border-zinc-200 hover:border-sky-500/50 hover:shadow-md' 
+                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
             }`}
           >
             <div className="flex items-center justify-between gap-3">
@@ -314,7 +370,7 @@ export function SakodeLinks() {
               <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
                 isLight ? 'text-zinc-400 group-hover:text-sky-600' : 'text-zinc-400 group-hover:text-sky-400'
               }`}>
-                <ArrowUpRight className="w-4 h-4" />
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </div>
             </div>
           </motion.a>
@@ -322,11 +378,12 @@ export function SakodeLinks() {
           {/* Email Card */}
           <motion.a
             whileHover={{ y: -2 }}
+            whileTap={{ scale: 0.98 }}
             href="mailto:sakodeacademy@gmail.com"
-            className={`block w-full p-4 rounded-xl border transition-all group ${
+            className={`block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
               isLight 
-                ? 'bg-white border-zinc-200 hover:border-amber-500/50 hover:shadow-md text-zinc-900' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700 text-zinc-100 shadow-sm'
+                ? 'bg-white border-zinc-200 hover:border-amber-500/50 hover:shadow-md' 
+                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
             }`}
           >
             <div className="flex items-center justify-between gap-3">
