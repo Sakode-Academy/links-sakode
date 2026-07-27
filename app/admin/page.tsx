@@ -735,9 +735,10 @@ service cloud.firestore {
                         </label>
                         <input
                           type="text"
+                          maxLength={16}
                           value={headerContent.modalBadge || ''}
                           onChange={(e) => setHeaderContent({ ...headerContent, modalBadge: e.target.value })}
-                          placeholder="Launching Soon 2026"
+                          placeholder="Launching Soon"
                           className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
                         />
                       </div>
@@ -1189,10 +1190,11 @@ service cloud.firestore {
 
                   <div>
                     <label className="block text-xs font-medium text-zinc-300 mb-1">
-                      Teks Badge (Opsional)
+                      Teks Badge (Maks 14 Karakter)
                     </label>
                     <input
                       type="text"
+                      maxLength={14}
                       value={editingLink.badge || ''}
                       onChange={(e) => setEditingLink({ ...editingLink, badge: e.target.value })}
                       placeholder="Contoh: Official IG"

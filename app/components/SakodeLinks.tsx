@@ -172,6 +172,12 @@ export function SakodeLinks() {
   const activeLinks = linksList.filter(item => item.isEnabled !== false);
   const whatsappUrl = linksList.find(l => l.iconName === 'whatsapp')?.url || 'https://wa.me/message/UTMRQNH4ERNBM1';
 
+  // Format badge text uniformly (max 14 chars for clean mobile layout)
+  const formatBadgeText = (text?: string) => {
+    if (!text) return '';
+    return text.length > 14 ? text.slice(0, 13) + '…' : text;
+  };
+
   return (
     <div
       className={`min-h-screen w-full relative overflow-x-hidden font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-300 ${
@@ -325,19 +331,19 @@ export function SakodeLinks() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <h3 className={`text-sm font-bold transition-colors ${
+                    <h3 className={`text-sm font-bold truncate transition-colors ${
                       isLight ? 'text-zinc-900 group-hover:text-emerald-600' : 'text-white group-hover:text-emerald-400'
                     }`}>
                       {item.title}
                     </h3>
-                    {item.badge && (
-                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
+                    {/* {item.badge && (
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border shrink-0 whitespace-nowrap ${
                         isLight ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-zinc-800 text-emerald-400 border-zinc-700'
                       }`}>
-                        <Zap className="w-3 h-3 text-emerald-500" />
-                        {item.badge}
+                        <Zap className="w-3 h-3 text-emerald-500 shrink-0" />
+                        <span className="truncate max-w-27.5 sm:max-w-none">{formatBadgeText(item.badge)}</span>
                       </span>
-                    )}
+                    )} */}
                   </div>
                   <p className={`text-xs truncate ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
                     {item.subtitle}
