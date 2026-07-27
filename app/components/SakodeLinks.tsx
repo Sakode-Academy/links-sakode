@@ -141,8 +141,8 @@ export function SakodeLinks() {
             Sakode Academy
           </h1>
 
-          <p className={`text-xs max-w-sm leading-relaxed mb-1 ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`}>
-            Wadah pembelajaran pemrograman, keahlian digital, dan inovasi teknologi.
+          <p className={`text-xs max-w-sm font-medium leading-relaxed mb-1 ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`}>
+            Masa Depan Digital, Dimulai Dari Sini
           </p>
         </motion.div>
 

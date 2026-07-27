@@ -15,20 +15,20 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://link.sakode.com"),
   title: {
-    default: "Sakode Academy - Official Links",
+    default: "Sakode Academy - Masa Depan Digital, Dimulai Dari Sini",
     template: "%s | Sakode Academy",
   },
-  description: "Tautan resmi Sakode Academy (link.sakode.com): WhatsApp Pendaftaran, Instagram, TikTok, Website Portal Official, & Contact Email. Komunitas & Akademi Belajar Koding Samarang, Garut, Jawa Barat.",
+  description: "Sakode Academy - Masa Depan Digital, Dimulai Dari Sini. Tautan resmi: WhatsApp Pendaftaran, Instagram, TikTok, Website Portal Official, & Contact Email.",
   keywords: [
     "Sakode Academy",
+    "Masa Depan Digital Dimulai Dari Sini",
     "Sakode Garut",
     "Sakode Samarang",
     "Belajar Koding Garut",
     "Sakode Links",
     "Linktree Sakode",
     "Official Links Sakode",
-    "Bootcamp Web Development Garut",
-    "Komunitas Developer Garut",
+    "Bootcamp Web Development",
     "link.sakode.com"
   ],
   authors: [{ name: "Sakode Academy Team", url: "https://link.sakode.com" }],
@@ -55,8 +55,8 @@ export const metadata: Metadata = {
     apple: "/icon.svg",
   },
   openGraph: {
-    title: "Sakode Academy - Official Links Hub",
-    description: "Tautan resmi Sakode Academy Samarang Garut: WhatsApp Pendaftaran, Instagram, TikTok, Website Portal Official, & Contact Email.",
+    title: "Sakode Academy - Masa Depan Digital, Dimulai Dari Sini",
+    description: "Tautan resmi Sakode Academy: WhatsApp Pendaftaran, Instagram, TikTok, Website Portal Official, & Contact Email.",
     url: "https://link.sakode.com",
     siteName: "Sakode Academy",
     images: [
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Sakode Academy Official Links Hub",
+        alt: "Sakode Academy - Masa Depan Digital, Dimulai Dari Sini",
       },
     ],
     locale: "id_ID",
@@ -72,8 +72,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sakode Academy - Official Links",
-    description: "Tautan resmi Sakode Academy Samarang Garut: WhatsApp Pendaftaran, Instagram, TikTok, Website Portal Official, & Contact Email.",
+    title: "Sakode Academy - Masa Depan Digital, Dimulai Dari Sini",
+    description: "Tautan resmi Sakode Academy: WhatsApp Pendaftaran, Instagram, TikTok, Website Portal Official, & Contact Email.",
     images: ["/opengraph-image"],
     creator: "@sakodeacademy",
   },
@@ -89,6 +89,7 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "name": "Sakode Academy",
+    "slogan": "Masa Depan Digital, Dimulai Dari Sini",
     "url": "https://link.sakode.com",
     "logo": "https://link.sakode.com/icon.svg",
     "sameAs": [
@@ -96,7 +97,7 @@ export default function RootLayout({
       "https://vm.tiktok.com/ZS9r7LeLjdhWX-yvCBH/",
       "https://wa.me/message/UTMRQNH4ERNBM1"
     ],
-    "description": "Akademi & Komunitas Teknologi Samarang, Garut, Jawa Barat. Belajar Koding, Fullstack Web Development & Inovasi Digital.",
+    "description": "Sakode Academy - Masa Depan Digital, Dimulai Dari Sini. Belajar Koding, Fullstack Web Development & Inovasi Digital.",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Samarang",

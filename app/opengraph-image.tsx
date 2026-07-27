@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'Sakode Academy - Official Links Hub';
+export const alt = 'Sakode Academy - Masa Depan Digital, Dimulai Dari Sini';
 export const size = {
   width: 1200,
   height: 630,
@@ -65,7 +65,7 @@ export default async function Image() {
                 background: '#10b981',
               }}
             />
-            Official Link Hub • Samarang, Garut
+            Official Link Hub • link.sakode.com
           </div>
 
           {/* Title */}
@@ -82,18 +82,19 @@ export default async function Image() {
             Sakode Academy
           </div>
 
-          {/* Subtitle */}
+          {/* Subtitle / Tagline */}
           <div
             style={{
-              fontSize: 22,
-              color: '#a1a1aa',
+              fontSize: 26,
+              fontWeight: 600,
+              color: '#34d399',
               textAlign: 'center',
               maxWidth: 750,
               lineHeight: 1.4,
               marginBottom: 40,
             }}
           >
-            Akademi & Komunitas Teknologi Samarang, Garut. Belajar Koding, Fullstack Web Development & Inovasi Digital.
+            Masa Depan Digital, Dimulai Dari Sini
           </div>
 
           {/* Links Pills Showcase */}
@@ -114,7 +115,7 @@ export default async function Image() {
                 borderRadius: 14,
                 background: '#18181b',
                 border: '1px solid #27272a',
-                color: '#34d399',
+                color: '#ffffff',
                 fontSize: 15,
                 fontWeight: 600,
               }}
