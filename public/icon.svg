@@ -1,0 +1,24 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rounded Base Background -->
+  <rect width="512" height="512" rx="140" fill="#09090B"/>
+  <rect x="16" y="16" width="480" height="480" rx="124" stroke="#27272A" stroke-width="8"/>
+  
+  <!-- Left Bracket < (Green #009670) -->
+  <path d="M165 195L105 256L165 317" stroke="#009670" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Right Bracket > (Pink #FF409F) -->
+  <path d="M347 195L407 256L347 317" stroke="#FF409F" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Slash / (Orange #F9723B to Yellow #EDAC1C gradient) -->
+  <path d="M285 160L227 352" stroke="url(#slash-grad)" stroke-width="36" stroke-linecap="round"/>
+  
+  <!-- Central Spark / Node (Blue #54A5E4) -->
+  <circle cx="256" cy="256" r="18" fill="#54A5E4"/>
+  
+  <defs>
+    <linearGradient id="slash-grad" x1="285" y1="160" x2="227" y2="352" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F9723B"/>
+      <stop offset="1" stop-color="#EDAC1C"/>
+    </linearGradient>
+  </defs>
+</svg>

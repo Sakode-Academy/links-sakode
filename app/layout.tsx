@@ -13,9 +13,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sakode Academy - Official Links Hub & Community",
-  description: "Tautan resmi Sakode Academy: WhatsApp Pendaftaran, Instagram, TikTok, Website Portal Official, & Contact Email. Komunitas Belajar Koding Papua.",
+  title: "Sakode Academy - Official Links",
+  description: "Tautan resmi Sakode Academy (link.sakode.com): WhatsApp Pendaftaran, Instagram, TikTok, Website Portal Official, & Contact Email.",
   keywords: ["Sakode Academy", "Sakode Papua", "Belajar Koding Papua", "Sakode Links", "Linktree Sakode", "Bootcamp Web Development"],
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
     title: "Sakode Academy - Official Links Hub",
     description: "Hubungkan diri Anda dengan Sakode Academy via WhatsApp, Instagram, TikTok, Email & Portal Website.",
@@ -35,7 +42,7 @@ export default function RootLayout({
       lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-slate-950 text-slate-100 selection:bg-cyan-500 selection:text-slate-950">
+      <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 selection:bg-emerald-500 selection:text-zinc-950">
         {children}
       </body>
     </html>
