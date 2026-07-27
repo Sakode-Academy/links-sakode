@@ -18,7 +18,6 @@ import {
   Mail,
   Send
 } from 'lucide-react';
-import { SAKODE_LINKS, SakodeLink } from '../data/links';
 import { WhatsappIcon, InstagramIcon, TiktokIcon, WebsiteIcon, EmailIcon, SakodeLogoSvg } from './Icons';
 import { WebsiteStatusModal } from './WebsiteStatusModal';
 import { QrModal } from './QrModal';
@@ -42,7 +41,6 @@ export function SakodeLinks() {
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
 
-    // Zero-blank View Transition from button origin
     if (typeof document !== 'undefined' && 'startViewTransition' in document) {
       const endRadius = Math.hypot(
         Math.max(x, window.innerWidth - x),
@@ -67,7 +65,6 @@ export function SakodeLinks() {
         );
       });
     } else {
-      // Instant direct swap fallback (no blank moment)
       setTheme(targetTheme);
     }
   };
@@ -85,6 +82,31 @@ export function SakodeLinks() {
     setTimeout(() => setCopiedPage(false), 2000);
   };
 
+  // Stagger Container Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.07,
+        delayChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 16 },
+    show: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        type: 'spring' as const,
+        stiffness: 350,
+        damping: 25
+      }
+    }
+  };
+
   return (
     <div
       className={`min-h-screen w-full relative overflow-x-hidden font-sans selection:bg-emerald-500 selection:text-white transition-colors duration-300 ${
@@ -95,16 +117,22 @@ export function SakodeLinks() {
       {/* Background Grid */}
       {!isLight && <BackgroundEffects />}
 
-      <div className="relative z-10 w-full max-w-lg mx-auto px-4 py-8 sm:py-12 flex flex-col items-center">
+      <motion.div 
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="relative z-10 w-full max-w-lg mx-auto px-4 py-8 sm:py-12 flex flex-col items-center"
+      >
         
         {/* Top Control Dock */}
-        <div className="w-full flex items-center justify-between mb-8 px-1">
+        <motion.div variants={itemVariants} className="w-full flex items-center justify-between mb-8 px-1">
           
           {/* Theme Switcher Dock */}
           <div className={`relative flex items-center p-1 rounded-xl border transition-colors duration-300 ${
             isLight ? 'bg-white border-zinc-200 shadow-sm' : 'bg-zinc-900 border-zinc-800'
           }`}>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={(e) => handleThemeSwitch('dark', e)}
               className={`relative z-10 p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 !isLight ? 'text-white' : 'text-zinc-400 hover:text-zinc-900'
@@ -112,9 +140,10 @@ export function SakodeLinks() {
               title="Mode Gelap"
             >
               <Moon className="w-3.5 h-3.5" />
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileTap={{ scale: 0.9 }}
               onClick={(e) => handleThemeSwitch('light', e)}
               className={`relative z-10 p-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer ${
                 isLight ? 'text-zinc-900' : 'text-zinc-400 hover:text-white'
@@ -122,7 +151,7 @@ export function SakodeLinks() {
               title="Mode Terang"
             >
               <Sun className="w-3.5 h-3.5 text-amber-500" />
-            </button>
+            </motion.button>
 
             {/* Sliding Pill Indicator */}
             <motion.div
@@ -141,7 +170,8 @@ export function SakodeLinks() {
           {/* Quick Actions */}
           <div className="flex items-center gap-2">
             <motion.button
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.94 }}
               onClick={() => setQrModalOpen(true)}
               className={`p-2.5 rounded-xl border transition-colors duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-medium ${
                 isLight 
@@ -155,7 +185,8 @@ export function SakodeLinks() {
             </motion.button>
 
             <motion.button
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.94 }}
               onClick={handleCopyPageLink}
               className={`p-2.5 rounded-xl border transition-colors duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-medium ${
                 isLight 
@@ -168,25 +199,29 @@ export function SakodeLinks() {
               <span className="hidden sm:inline">{copiedPage ? 'Tersalin' : 'Bagikan'}</span>
             </motion.button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Profile / Logo Header */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
+          variants={itemVariants}
           className="w-full flex flex-col items-center text-center mb-8"
         >
-          {/* Logo Card */}
-          <div 
+          {/* Logo Card with Hover Scale */}
+          <motion.div 
+            whileHover={{ scale: 1.03, y: -2 }}
+            whileTap={{ scale: 0.97 }}
             onClick={() => setWebsiteModalOpen(true)}
-            className="w-full max-w-xs mb-4 cursor-pointer hover:opacity-95 transition-opacity relative group"
+            className="w-full max-w-xs mb-4 cursor-pointer relative group"
           >
             <SakodeLogoSvg className="w-full h-auto" theme={theme} />
-            <div className="absolute -bottom-1.5 -right-1.5 p-1 bg-emerald-500 rounded-full text-zinc-950 shadow-md flex items-center justify-center">
+            <motion.div 
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+              className="absolute -bottom-1.5 -right-1.5 p-1 bg-emerald-500 rounded-full text-zinc-950 shadow-md flex items-center justify-center"
+            >
               <BadgeCheck className="w-4 h-4 fill-emerald-500 text-zinc-950" />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Title & Tagline */}
           <h1 className={`text-xl font-bold tracking-tight mb-1 ${isLight ? 'text-zinc-900' : 'text-white'}`}>
@@ -199,11 +234,12 @@ export function SakodeLinks() {
         </motion.div>
 
         {/* Links Grid */}
-        <div className="w-full space-y-3 mb-8">
+        <motion.div variants={containerVariants} className="w-full space-y-3 mb-8">
           
           {/* WhatsApp Card */}
           <motion.a
-            whileHover={{ y: -2 }}
+            variants={itemVariants}
+            whileHover={{ y: -3, scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             href="https://wa.me/message/UTMRQNH4ERNBM1"
             target="_blank"
@@ -215,7 +251,7 @@ export function SakodeLinks() {
             }`}
           >
             <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 ${
+              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
                 isLight ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-zinc-800 border-zinc-700 text-emerald-400'
               }`}>
                 <WhatsappIcon className="w-5 h-5" />
@@ -230,7 +266,13 @@ export function SakodeLinks() {
                   <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
                     isLight ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-zinc-800 text-emerald-400 border-zinc-700'
                   }`}>
-                    <Zap className="w-3 h-3 text-emerald-500" /> Respon Cepat
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                    >
+                      <Zap className="w-3 h-3 text-emerald-500" />
+                    </motion.div>
+                    Respon Cepat
                   </span>
                 </div>
                 <p className={`text-xs truncate ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
@@ -240,14 +282,15 @@ export function SakodeLinks() {
               <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
                 isLight ? 'text-zinc-400 group-hover:text-emerald-600' : 'text-zinc-400 group-hover:text-emerald-400'
               }`}>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </div>
             </div>
           </motion.a>
 
           {/* Instagram Card */}
           <motion.a
-            whileHover={{ y: -2 }}
+            variants={itemVariants}
+            whileHover={{ y: -3, scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             href="https://www.instagram.com/sakodeacademy?igsh=MWZiNmR3ODU4NG12ZA=="
             target="_blank"
@@ -259,7 +302,7 @@ export function SakodeLinks() {
             }`}
           >
             <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 ${
+              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
                 isLight ? 'bg-pink-50 border-pink-200 text-pink-600' : 'bg-zinc-800 border-zinc-700 text-pink-400'
               }`}>
                 <InstagramIcon className="w-5 h-5" />
@@ -284,14 +327,15 @@ export function SakodeLinks() {
               <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
                 isLight ? 'text-zinc-400 group-hover:text-pink-600' : 'text-zinc-400 group-hover:text-pink-400'
               }`}>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </div>
             </div>
           </motion.a>
 
           {/* Website Portal Special Action Card */}
           <motion.div
-            whileHover={{ y: -2 }}
+            variants={itemVariants}
+            whileHover={{ y: -3, scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setWebsiteModalOpen(true)}
             className={`w-full p-4 rounded-xl border transition-colors duration-300 cursor-pointer group shadow-sm ${
@@ -301,7 +345,7 @@ export function SakodeLinks() {
             }`}
           >
             <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 ${
+              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
                 isLight ? 'bg-cyan-50 border-cyan-200 text-cyan-600' : 'bg-zinc-800 border-zinc-700 text-cyan-400'
               }`}>
                 <WebsiteIcon className="w-5 h-5" />
@@ -316,7 +360,13 @@ export function SakodeLinks() {
                   <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
                     isLight ? 'bg-cyan-50 text-cyan-700 border-cyan-200' : 'bg-zinc-800 text-cyan-400 border-zinc-700'
                   }`}>
-                    <Sparkles className="w-3 h-3 text-cyan-500" /> Sneak Peek v2.0
+                    <motion.div
+                      animate={{ rotate: [0, 15, -15, 0] }}
+                      transition={{ repeat: Infinity, duration: 4 }}
+                    >
+                      <Sparkles className="w-3 h-3 text-cyan-500" />
+                    </motion.div>
+                    Sneak Peek v2.0
                   </span>
                 </div>
                 <p className={`text-xs truncate ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
@@ -326,14 +376,15 @@ export function SakodeLinks() {
               <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
                 isLight ? 'text-zinc-400 group-hover:text-cyan-600' : 'text-zinc-400 group-hover:text-cyan-400'
               }`}>
-                <Globe className="w-4 h-4" />
+                <Globe className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
               </div>
             </div>
           </motion.div>
 
           {/* TikTok Card */}
           <motion.a
-            whileHover={{ y: -2 }}
+            variants={itemVariants}
+            whileHover={{ y: -3, scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             href="https://vm.tiktok.com/ZS9r7LeLjdhWX-yvCBH/"
             target="_blank"
@@ -345,7 +396,7 @@ export function SakodeLinks() {
             }`}
           >
             <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 ${
+              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
                 isLight ? 'bg-sky-50 border-sky-200 text-sky-600' : 'bg-zinc-800 border-zinc-700 text-sky-400'
               }`}>
                 <TiktokIcon className="w-5 h-5" />
@@ -370,14 +421,15 @@ export function SakodeLinks() {
               <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
                 isLight ? 'text-zinc-400 group-hover:text-sky-600' : 'text-zinc-400 group-hover:text-sky-400'
               }`}>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </div>
             </div>
           </motion.a>
 
           {/* Email Card */}
           <motion.a
-            whileHover={{ y: -2 }}
+            variants={itemVariants}
+            whileHover={{ y: -3, scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             href="mailto:sakodeacademy@gmail.com"
             className={`block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
@@ -387,7 +439,7 @@ export function SakodeLinks() {
             }`}
           >
             <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 ${
+              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
                 isLight ? 'bg-amber-50 border-amber-200 text-amber-600' : 'bg-zinc-800 border-zinc-700 text-amber-400'
               }`}>
                 <EmailIcon className="w-5 h-5" />
@@ -412,32 +464,33 @@ export function SakodeLinks() {
               <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
                 isLight ? 'text-zinc-400 group-hover:text-amber-600' : 'text-zinc-400 group-hover:text-amber-400'
               }`}>
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </div>
             </div>
           </motion.a>
 
-        </div>
+        </motion.div>
 
         {/* Footer */}
-        <footer className="mt-8 text-center text-xs text-zinc-400 space-y-1">
+        <motion.footer variants={itemVariants} className="mt-8 text-center text-xs text-zinc-400 space-y-1">
           <p className={`font-medium ${isLight ? 'text-zinc-700' : 'text-zinc-300'}`}>
             Sakode Academy • Samarang, Garut, Jawa Barat
           </p>
           <p suppressHydrationWarning className={`text-[11px] ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
             © {new Date().getFullYear()} Sakode Academy. Hak cipta dilindungi.
           </p>
-        </footer>
+        </motion.footer>
 
-      </div>
+      </motion.div>
 
       {/* Toast Alert */}
       <AnimatePresence>
         {toastMsg && (
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 15, scale: 0.95 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
             className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl border text-xs font-medium shadow-xl flex items-center gap-2 ${
               isLight 
                 ? 'bg-white border-zinc-300 text-zinc-900' 
