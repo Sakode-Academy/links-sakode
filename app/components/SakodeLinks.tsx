@@ -140,17 +140,8 @@ export function SakodeLinks() {
           <h1 className={`text-xl font-bold tracking-tight mb-1 ${isLight ? 'text-zinc-900' : 'text-white'}`}>
             Sakode Academy
           </h1>
-          
-          <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border text-xs font-medium mb-3 ${
-            isLight 
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-700' 
-              : 'bg-zinc-900 border-zinc-800 text-emerald-400'
-          }`}>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>Akademi & Komunitas Teknologi Papua</span>
-          </div>
 
-          <p className={`text-xs max-w-sm leading-relaxed ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`}>
+          <p className={`text-xs max-w-sm leading-relaxed mb-1 ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`}>
             Wadah pembelajaran pemrograman, keahlian digital, dan inovasi teknologi.
           </p>
         </motion.div>
@@ -374,7 +365,7 @@ export function SakodeLinks() {
         {/* Footer */}
         <footer className="mt-8 text-center text-xs text-zinc-400 space-y-1">
           <p className={`font-medium ${isLight ? 'text-zinc-700' : 'text-zinc-300'}`}>
-            Sakode Academy • Jayapura, Papua
+            Sakode Academy • Samarang, Garut, Jawa Barat
           </p>
           <p suppressHydrationWarning className={`text-[11px] ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
             © {new Date().getFullYear()} Sakode Academy. Hak cipta dilindungi.
