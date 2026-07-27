@@ -376,7 +376,7 @@ export function SakodeLinks() {
           <p className={`font-medium ${isLight ? 'text-zinc-700' : 'text-zinc-300'}`}>
             Sakode Academy • Jayapura, Papua
           </p>
-          <p className={`text-[11px] ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
+          <p suppressHydrationWarning className={`text-[11px] ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
             © {new Date().getFullYear()} Sakode Academy. Hak cipta dilindungi.
           </p>
         </footer>
