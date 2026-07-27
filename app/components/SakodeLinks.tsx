@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Check, 
@@ -12,15 +12,19 @@ import {
   Sun,
   Moon,
   Zap,
-  Camera,
-  Video,
   Globe,
-  Mail,
-  Send,
   MousePointer,
   Palette
 } from 'lucide-react';
-import { WhatsappIcon, InstagramIcon, TiktokIcon, WebsiteIcon, EmailIcon, SakodeLogoSvg } from './Icons';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+import { 
+  SAKODE_LINKS, 
+  DEFAULT_HEADER_CONTENT, 
+  SakodeLink, 
+  SiteHeaderContent 
+} from '../data/links';
+import { DynamicIcon, SakodeLogoSvg } from './Icons';
 import { WebsiteStatusModal } from './WebsiteStatusModal';
 import { QrModal } from './QrModal';
 import { CursorModal } from './CursorModal';
@@ -39,6 +43,10 @@ export function SakodeLinks() {
   const [cursorStyle, setCursorStyle] = useState<CursorStyle>('lens');
   const [bgStyle, setBgStyle] = useState<BackgroundStyle>('constellation');
 
+  // Dynamic Content & Links State
+  const [headerContent, setHeaderContent] = useState<SiteHeaderContent>(DEFAULT_HEADER_CONTENT);
+  const [linksList, setLinksList] = useState<SakodeLink[]>(SAKODE_LINKS);
+
   const [websiteModalOpen, setWebsiteModalOpen] = useState<boolean>(false);
   const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
   const [cursorModalOpen, setCursorModalOpen] = useState<boolean>(false);
@@ -49,6 +57,45 @@ export function SakodeLinks() {
 
   const isLight = theme === 'light';
 
+  // Firestore Realtime Subscription for Content & Links
+  useEffect(() => {
+    // Check localStorage fallback first
+    const localContent = localStorage.getItem('sakode_header_content');
+    if (localContent) {
+      try { setHeaderContent(JSON.parse(localContent)); } catch (e) {}
+    }
+
+    const localLinks = localStorage.getItem('sakode_links_list');
+    if (localLinks) {
+      try { setLinksList(JSON.parse(localLinks)); } catch (e) {}
+    }
+
+    // Subscribe to Firestore Header Content
+    const contentRef = doc(db, 'settings', 'content');
+    const unsubContent = onSnapshot(contentRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setHeaderContent(docSnap.data() as SiteHeaderContent);
+      }
+    }, (err) => {
+      console.log('Header content snapshot notice:', err.message);
+    });
+
+    // Subscribe to Firestore Links List
+    const linksRef = doc(db, 'settings', 'links');
+    const unsubLinks = onSnapshot(linksRef, (docSnap) => {
+      if (docSnap.exists() && Array.isArray(docSnap.data().items)) {
+        setLinksList(docSnap.data().items as SakodeLink[]);
+      }
+    }, (err) => {
+      console.log('Links list snapshot notice:', err.message);
+    });
+
+    return () => {
+      unsubContent();
+      unsubLinks();
+    };
+  }, []);
+
   const handleThemeSwitch = (targetTheme: ThemeMode, e: React.MouseEvent<HTMLButtonElement>) => {
     if (targetTheme === theme) return;
 
@@ -56,15 +103,15 @@ export function SakodeLinks() {
     const x = rect.left + rect.width / 2;
     const y = rect.top + rect.height / 2;
 
-    const doc = typeof document !== 'undefined' ? (document as DocumentWithViewTransition) : null;
+    const docObj = typeof document !== 'undefined' ? (document as DocumentWithViewTransition) : null;
 
-    if (doc?.startViewTransition) {
+    if (docObj?.startViewTransition) {
       const endRadius = Math.hypot(
         Math.max(x, window.innerWidth - x),
         Math.max(y, window.innerHeight - y)
       );
 
-      const transition = doc.startViewTransition(() => {
+      const transition = docObj.startViewTransition(() => {
         setTheme(targetTheme);
       });
 
@@ -99,7 +146,6 @@ export function SakodeLinks() {
     setTimeout(() => setCopiedPage(false), 2000);
   };
 
-  // Stagger Container Variants
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -123,6 +169,8 @@ export function SakodeLinks() {
       }
     }
   };
+
+  const activeLinks = linksList.filter(item => item.isEnabled !== false);
 
   return (
     <div
@@ -244,256 +292,100 @@ export function SakodeLinks() {
 
           {/* Title & Tagline */}
           <h1 className={`text-xl font-bold tracking-tight mb-1 ${isLight ? 'text-zinc-900' : 'text-white'}`}>
-            Sakode Academy
+            {headerContent.title}
           </h1>
 
           <p className={`text-xs max-w-sm font-medium leading-relaxed mb-1 ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`}>
-            Masa Depan Digital, Dimulai Dari Sini
+            {headerContent.tagline}
           </p>
         </motion.div>
 
-        {/* Links Grid */}
+        {/* Dynamic Links Grid */}
         <motion.div variants={containerVariants} className="w-full space-y-3 mb-8">
-          
-          {/* WhatsApp Card */}
-          <motion.a
-            variants={itemVariants}
-            whileHover={{ y: -3, scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            href="https://wa.me/message/UTMRQNH4ERNBM1"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
-              isLight 
-                ? 'bg-white border-zinc-200 hover:border-emerald-500/50 hover:shadow-md' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-            }`}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
-                isLight ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-zinc-800 border-zinc-700 text-emerald-400'
-              }`}>
-                <WhatsappIcon className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className={`text-sm font-bold transition-colors ${
-                    isLight ? 'text-zinc-900 group-hover:text-emerald-600' : 'text-white group-hover:text-emerald-400'
-                  }`}>
-                    WhatsApp Official
-                  </h3>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
-                    isLight ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-zinc-800 text-emerald-400 border-zinc-700'
-                  }`}>
-                    <motion.div
-                      animate={{ scale: [1, 1.2, 1] }}
-                      transition={{ repeat: Infinity, duration: 2 }}
-                    >
-                      <Zap className="w-3 h-3 text-emerald-500" />
-                    </motion.div>
-                    Respon Cepat
-                  </span>
-                </div>
-                <p className={`text-xs truncate ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Konsultasi pendaftaran bootcamp & info program akademi
-                </p>
-              </div>
-              <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-                isLight ? 'text-zinc-400 group-hover:text-emerald-600' : 'text-zinc-400 group-hover:text-emerald-400'
-              }`}>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </div>
-            </div>
-          </motion.a>
+          {activeLinks.map((item) => {
+            const isWebsiteSpecial = item.isSpecialAction || item.url === '#website-status';
 
-          {/* Instagram Card */}
-          <motion.a
-            variants={itemVariants}
-            whileHover={{ y: -3, scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            href="https://www.instagram.com/sakodeacademy?igsh=MWZiNmR3ODU4NG12ZA=="
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
-              isLight 
-                ? 'bg-white border-zinc-200 hover:border-pink-500/50 hover:shadow-md' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-            }`}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
-                isLight ? 'bg-pink-50 border-pink-200 text-pink-600' : 'bg-zinc-800 border-zinc-700 text-pink-400'
-              }`}>
-                <InstagramIcon className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className={`text-sm font-bold transition-colors ${
-                    isLight ? 'text-zinc-900 group-hover:text-pink-600' : 'text-white group-hover:text-pink-400'
-                  }`}>
-                    Instagram @sakodeacademy
-                  </h3>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
-                    isLight ? 'bg-pink-50 text-pink-700 border-pink-200' : 'bg-zinc-800 text-pink-400 border-zinc-700'
-                  }`}>
-                    <Camera className="w-3 h-3 text-pink-500" /> Official IG
-                  </span>
-                </div>
-                <p className={`text-xs truncate ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Update kegiatan, informasi event, dan materi edukasi
-                </p>
-              </div>
-              <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-                isLight ? 'text-zinc-400 group-hover:text-pink-600' : 'text-zinc-400 group-hover:text-pink-400'
-              }`}>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </div>
-            </div>
-          </motion.a>
+            const cardProps = {
+              variants: itemVariants,
+              whileHover: { y: -3, scale: 1.01 },
+              whileTap: { scale: 0.98 },
+              className: `block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
+                isLight 
+                  ? 'bg-white border-zinc-200 hover:border-emerald-500/50 hover:shadow-md' 
+                  : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
+              }`,
+            };
 
-          {/* Website Portal Special Action Card */}
-          <motion.div
-            variants={itemVariants}
-            whileHover={{ y: -3, scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setWebsiteModalOpen(true)}
-            className={`w-full p-4 rounded-xl border transition-colors duration-300 cursor-pointer group shadow-sm ${
-              isLight 
-                ? 'bg-white border-zinc-200 hover:border-cyan-500/50 hover:shadow-md' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-            }`}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
-                isLight ? 'bg-cyan-50 border-cyan-200 text-cyan-600' : 'bg-zinc-800 border-zinc-700 text-cyan-400'
-              }`}>
-                <WebsiteIcon className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className={`text-sm font-bold transition-colors ${
-                    isLight ? 'text-zinc-900 group-hover:text-cyan-600' : 'text-white group-hover:text-cyan-400'
-                  }`}>
-                    Website Portal Official
-                  </h3>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
-                    isLight ? 'bg-cyan-50 text-cyan-700 border-cyan-200' : 'bg-zinc-800 text-cyan-400 border-zinc-700'
-                  }`}>
-                    <motion.div
-                      animate={{ rotate: [0, 15, -15, 0] }}
-                      transition={{ repeat: Infinity, duration: 4 }}
-                    >
-                      <Sparkles className="w-3 h-3 text-cyan-500" />
-                    </motion.div>
-                    Sneak Peek v2.0
-                  </span>
+            const content = (
+              <div className="flex items-center justify-between gap-3">
+                <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
+                  isLight ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-zinc-800 border-zinc-700 text-emerald-400'
+                }`}>
+                  <DynamicIcon iconName={item.iconName} className="w-5 h-5" />
                 </div>
-                <p className={`text-xs truncate ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Portal pembelajaran LMS dan hub komunitas (Versi 2.0)
-                </p>
-              </div>
-              <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-                isLight ? 'text-zinc-400 group-hover:text-cyan-600' : 'text-zinc-400 group-hover:text-cyan-400'
-              }`}>
-                <Globe className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* TikTok Card */}
-          <motion.a
-            variants={itemVariants}
-            whileHover={{ y: -3, scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            href="https://vm.tiktok.com/ZS9r7LeLjdhWX-yvCBH/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
-              isLight 
-                ? 'bg-white border-zinc-200 hover:border-sky-500/50 hover:shadow-md' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-            }`}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
-                isLight ? 'bg-sky-50 border-sky-200 text-sky-600' : 'bg-zinc-800 border-zinc-700 text-sky-400'
-              }`}>
-                <TiktokIcon className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className={`text-sm font-bold transition-colors ${
-                    isLight ? 'text-zinc-900 group-hover:text-sky-600' : 'text-white group-hover:text-sky-400'
-                  }`}>
-                    TikTok Sakode Academy
-                  </h3>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
-                    isLight ? 'bg-sky-50 text-sky-700 border-sky-200' : 'bg-zinc-800 text-sky-400 border-zinc-700'
-                  }`}>
-                    <Video className="w-3 h-3 text-sky-500" /> Video Shorts
-                  </span>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <h3 className={`text-sm font-bold transition-colors ${
+                      isLight ? 'text-zinc-900 group-hover:text-emerald-600' : 'text-white group-hover:text-emerald-400'
+                    }`}>
+                      {item.title}
+                    </h3>
+                    {item.badge && (
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
+                        isLight ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-zinc-800 text-emerald-400 border-zinc-700'
+                      }`}>
+                        <Zap className="w-3 h-3 text-emerald-500" />
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
+                  <p className={`text-xs truncate ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                    {item.subtitle}
+                  </p>
                 </div>
-                <p className={`text-xs truncate ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Konten video edukasi koding dan seputar dunia teknologi
-                </p>
-              </div>
-              <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-                isLight ? 'text-zinc-400 group-hover:text-sky-600' : 'text-zinc-400 group-hover:text-sky-400'
-              }`}>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-              </div>
-            </div>
-          </motion.a>
-
-          {/* Email Card */}
-          <motion.a
-            variants={itemVariants}
-            whileHover={{ y: -3, scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            href="mailto:sakodeacademy@gmail.com"
-            className={`block w-full p-4 rounded-xl border transition-colors duration-300 group shadow-sm ${
-              isLight 
-                ? 'bg-white border-zinc-200 hover:border-amber-500/50 hover:shadow-md' 
-                : 'bg-zinc-900 border-zinc-800 hover:border-zinc-700'
-            }`}
-          >
-            <div className="flex items-center justify-between gap-3">
-              <div className={`p-2.5 rounded-lg border shrink-0 group-hover:scale-105 transition-transform ${
-                isLight ? 'bg-amber-50 border-amber-200 text-amber-600' : 'bg-zinc-800 border-zinc-700 text-amber-400'
-              }`}>
-                <EmailIcon className="w-5 h-5" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <h3 className={`text-sm font-bold transition-colors ${
-                    isLight ? 'text-zinc-900 group-hover:text-amber-600' : 'text-white group-hover:text-amber-400'
-                  }`}>
-                    Email Business & Partnership
-                  </h3>
-                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${
-                    isLight ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-zinc-800 text-amber-400 border-zinc-700'
-                  }`}>
-                    <Mail className="w-3 h-3 text-amber-500" /> Official Email
-                  </span>
+                <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
+                  isLight ? 'text-zinc-400 group-hover:text-emerald-600' : 'text-zinc-400 group-hover:text-emerald-400'
+                }`}>
+                  {isWebsiteSpecial ? (
+                    <Globe className="w-4 h-4 group-hover:rotate-45 transition-transform duration-300" />
+                  ) : (
+                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                  )}
                 </div>
-                <p className={`text-xs truncate font-mono ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  sakodeacademy@gmail.com
-                </p>
               </div>
-              <div className={`p-1.5 rounded-lg transition-colors shrink-0 ${
-                isLight ? 'text-zinc-400 group-hover:text-amber-600' : 'text-zinc-400 group-hover:text-amber-400'
-              }`}>
-                <Send className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </div>
-            </div>
-          </motion.a>
+            );
 
+            if (isWebsiteSpecial) {
+              return (
+                <motion.div
+                  key={item.id}
+                  {...cardProps}
+                  onClick={() => setWebsiteModalOpen(true)}
+                  className={`${cardProps.className} cursor-pointer`}
+                >
+                  {content}
+                </motion.div>
+              );
+            }
+
+            return (
+              <motion.a
+                key={item.id}
+                {...cardProps}
+                href={item.url}
+                target={item.url.startsWith('http') ? '_blank' : '_self'}
+                rel={item.url.startsWith('http') ? 'noopener noreferrer' : undefined}
+              >
+                {content}
+              </motion.a>
+            );
+          })}
         </motion.div>
 
         {/* Footer */}
         <motion.footer variants={itemVariants} className="mt-8 text-center text-xs text-zinc-400 space-y-1">
           <p className={`font-medium ${isLight ? 'text-zinc-700' : 'text-zinc-300'}`}>
-            Sakode Academy • Samarang, Garut, Jawa Barat
+            Sakode Academy • {headerContent.location}
           </p>
           <p suppressHydrationWarning className={`text-[11px] ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
             © {new Date().getFullYear()} Sakode Academy. Hak cipta dilindungi.
