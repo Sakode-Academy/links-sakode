@@ -4,18 +4,32 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Code2, ShieldCheck, Rocket, Send, Check, ExternalLink, Globe } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { SiteHeaderContent } from '../data/links';
 
 interface WebsiteStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
   theme?: 'dark' | 'light';
+  headerContent?: SiteHeaderContent;
+  whatsappUrl?: string;
 }
 
-export function WebsiteStatusModal({ isOpen, onClose, theme = 'dark' }: WebsiteStatusModalProps) {
+export function WebsiteStatusModal({ 
+  isOpen, 
+  onClose, 
+  theme = 'dark',
+  headerContent,
+  whatsappUrl = 'https://wa.me/message/UTMRQNH4ERNBM1'
+}: WebsiteStatusModalProps) {
   const [emailInput, setEmailInput] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 
   const isLight = theme === 'light';
+
+  const badgeText = headerContent?.modalBadge || 'Launching Soon 2026';
+  const modalTitle = headerContent?.modalTitle || 'Portal Website Sakode 2.0';
+  const modalDesc = headerContent?.modalDesc || 'Website resmi Sakode Academy sedang dalam tahap pengembangan. Kami menghadirkan platform LMS interaktif, modul koding hands-on, dan hub komunitas tech.';
+  const modalProgress = headerContent?.modalProgress || '85%';
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,16 +98,16 @@ export function WebsiteStatusModal({ isOpen, onClose, theme = 'dark' }: WebsiteS
                     ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
                     : 'bg-zinc-800 text-emerald-400 border-zinc-700'
                 }`}>
-                  <Sparkles className="w-3 h-3 text-emerald-500" /> Launching Soon 2026
+                  <Sparkles className="w-3 h-3 text-emerald-500" /> {badgeText}
                 </div>
                 <h3 className={`text-lg font-bold ${isLight ? 'text-zinc-900' : 'text-white'}`}>
-                  Portal Website Sakode 2.0
+                  {modalTitle}
                 </h3>
               </div>
             </div>
 
             <p className={`text-xs sm:text-sm leading-relaxed mb-6 ${isLight ? 'text-zinc-600' : 'text-zinc-400'}`}>
-              Website resmi Sakode Academy sedang dalam tahap pengembangan. Kami menghadirkan platform LMS interaktif, modul koding hands-on, dan hub komunitas tech.
+              {modalDesc}
             </p>
 
             {/* Progress Bar */}
@@ -104,12 +118,12 @@ export function WebsiteStatusModal({ isOpen, onClose, theme = 'dark' }: WebsiteS
                 isLight ? 'text-zinc-600' : 'text-zinc-400'
               }`}>
                 <span>Progress Pengembangan System</span>
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono">85%</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono">{modalProgress}</span>
               </div>
               <div className={`w-full rounded-full h-2 overflow-hidden ${isLight ? 'bg-zinc-200' : 'bg-zinc-800'}`}>
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: '85%' }}
+                  animate={{ width: modalProgress }}
                   transition={{ duration: 1, ease: 'easeOut' }}
                   className="h-full bg-emerald-500 rounded-full"
                 />
@@ -201,7 +215,7 @@ export function WebsiteStatusModal({ isOpen, onClose, theme = 'dark' }: WebsiteS
             }`}>
               <span className={isLight ? 'text-zinc-500' : 'text-zinc-400'}>Butuh informasi lebih lanjut?</span>
               <a
-                href="https://wa.me/message/UTMRQNH4ERNBM1"
+                href={whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-emerald-600 dark:text-emerald-400 hover:underline font-medium inline-flex items-center gap-1"

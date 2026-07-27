@@ -6,7 +6,6 @@ import {
   Check, 
   QrCode, 
   Share2, 
-  Sparkles, 
   BadgeCheck,
   ArrowUpRight,
   Sun,
@@ -171,6 +170,7 @@ export function SakodeLinks() {
   };
 
   const activeLinks = linksList.filter(item => item.isEnabled !== false);
+  const whatsappUrl = linksList.find(l => l.iconName === 'whatsapp')?.url || 'https://wa.me/message/UTMRQNH4ERNBM1';
 
   return (
     <div
@@ -452,6 +452,8 @@ export function SakodeLinks() {
         isOpen={websiteModalOpen}
         onClose={() => setWebsiteModalOpen(false)}
         theme={theme}
+        headerContent={headerContent}
+        whatsappUrl={whatsappUrl}
       />
 
       <QrModal

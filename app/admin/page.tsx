@@ -42,7 +42,7 @@ import {
   EyeOff,
   ShieldCheck,
   UserCheck,
-  Link2
+  Globe
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
@@ -157,7 +157,7 @@ export default function AdminDashboardPage() {
       await setDoc(contentRef, headerContent, { merge: true });
       
       localStorage.setItem('sakode_header_content', JSON.stringify(headerContent));
-      showToast('Teks header & lokasi berhasil disimpan!');
+      showToast('Teks header & modal portal berhasil disimpan!');
     } catch (err: any) {
       console.error('Error saving content:', err);
       localStorage.setItem('sakode_header_content', JSON.stringify(headerContent));
@@ -391,71 +391,136 @@ export default function AdminDashboardPage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-6 shadow-xl"
+            className="space-y-6"
           >
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-800/60">
-              <div>
-                <h2 className="text-base font-bold">Kustomisasi Teks & Branding</h2>
-                <p className="text-xs text-zinc-400">Edit Judul, Tagline, dan Lokasi yang ditampilkan pada website utama.</p>
+            {/* Header Content Section */}
+            <div className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-800/60">
+                <div>
+                  <h2 className="text-base font-bold">Kustomisasi Header & Branding</h2>
+                  <p className="text-xs text-zinc-400">Edit Judul, Tagline, dan Lokasi yang ditampilkan pada website utama.</p>
+                </div>
               </div>
+
+              <form onSubmit={handleSaveContent} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+                    Judul Utama Web
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={headerContent.title}
+                    onChange={(e) => setHeaderContent({ ...headerContent, title: e.target.value })}
+                    placeholder="Sakode Academy"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+                    Tagline Resmi Sakode
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={headerContent.tagline}
+                    onChange={(e) => setHeaderContent({ ...headerContent, tagline: e.target.value })}
+                    placeholder="Masa Depan Digital, Dimulai Dari Sini"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
+                    Teks Lokasi & Footer
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={headerContent.location}
+                    onChange={(e) => setHeaderContent({ ...headerContent, location: e.target.value })}
+                    placeholder="Samarang, Garut, Jawa Barat"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors"
+                  />
+                </div>
+
+                {/* Modal Status Portal Customization Section */}
+                <div className="pt-4 border-t border-zinc-800/60">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Globe className="w-4 h-4 text-cyan-400" />
+                    <h3 className="text-xs font-bold text-white">Pengaturan Modal Status Portal LMS</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-medium text-zinc-300 mb-1">
+                        Teks Badge Status Modal
+                      </label>
+                      <input
+                        type="text"
+                        value={headerContent.modalBadge || ''}
+                        onChange={(e) => setHeaderContent({ ...headerContent, modalBadge: e.target.value })}
+                        placeholder="Launching Soon 2026"
+                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-zinc-300 mb-1">
+                        Persentase Progress LMS
+                      </label>
+                      <input
+                        type="text"
+                        value={headerContent.modalProgress || ''}
+                        onChange={(e) => setHeaderContent({ ...headerContent, modalProgress: e.target.value })}
+                        placeholder="85%"
+                        className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500 font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-3">
+                    <label className="block text-xs font-medium text-zinc-300 mb-1">
+                      Judul Modal Portal
+                    </label>
+                    <input
+                      type="text"
+                      value={headerContent.modalTitle || ''}
+                      onChange={(e) => setHeaderContent({ ...headerContent, modalTitle: e.target.value })}
+                      placeholder="Portal Website Sakode 2.0"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+
+                  <div className="mt-3">
+                    <label className="block text-xs font-medium text-zinc-300 mb-1">
+                      Deskripsi Modal Portal
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={headerContent.modalDesc || ''}
+                      onChange={(e) => setHeaderContent({ ...headerContent, modalDesc: e.target.value })}
+                      placeholder="Website resmi Sakode Academy sedang dalam tahap pengembangan..."
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-zinc-800/60 flex justify-end">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    type="submit"
+                    disabled={saving}
+                    className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold text-xs shadow-lg transition-colors cursor-pointer flex items-center gap-2 disabled:opacity-50"
+                  >
+                    <Save className="w-4 h-4" />
+                    <span>{saving ? 'Menyimpan...' : 'Simpan Semua Teks & Modal'}</span>
+                  </motion.button>
+                </div>
+              </form>
             </div>
-
-            <form onSubmit={handleSaveContent} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                  Judul Utama Web
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={headerContent.title}
-                  onChange={(e) => setHeaderContent({ ...headerContent, title: e.target.value })}
-                  placeholder="Sakode Academy"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                  Tagline Resmi Sakode
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={headerContent.tagline}
-                  onChange={(e) => setHeaderContent({ ...headerContent, tagline: e.target.value })}
-                  placeholder="Masa Depan Digital, Dimulai Dari Sini"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-zinc-300 mb-1.5">
-                  Teks Lokasi & Footer
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={headerContent.location}
-                  onChange={(e) => setHeaderContent({ ...headerContent, location: e.target.value })}
-                  placeholder="Samarang, Garut, Jawa Barat"
-                  className="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition-colors"
-                />
-              </div>
-
-              <div className="pt-4 border-t border-zinc-800/60 flex justify-end">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={saving}
-                  className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold text-xs shadow-lg transition-colors cursor-pointer flex items-center gap-2 disabled:opacity-50"
-                >
-                  <Save className="w-4 h-4" />
-                  <span>{saving ? 'Menyimpan...' : 'Simpan Perubahan Teks'}</span>
-                </motion.button>
-              </div>
-            </form>
           </motion.div>
         )}
 

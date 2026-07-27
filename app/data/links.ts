@@ -28,12 +28,20 @@ export interface SiteHeaderContent {
   title: string;
   tagline: string;
   location: string;
+  modalBadge?: string;
+  modalTitle?: string;
+  modalDesc?: string;
+  modalProgress?: string;
 }
 
 export const DEFAULT_HEADER_CONTENT: SiteHeaderContent = {
   title: 'Sakode Academy',
   tagline: 'Masa Depan Digital, Dimulai Dari Sini',
   location: 'Samarang, Garut, Jawa Barat',
+  modalBadge: 'Launching Soon 2026',
+  modalTitle: 'Portal Website Sakode 2.0',
+  modalDesc: 'Website resmi Sakode Academy sedang dalam tahap pengembangan. Kami menghadirkan platform LMS interaktif, modul koding hands-on, dan hub komunitas tech.',
+  modalProgress: '85%',
 };
 
 export const SAKODE_LINKS: SakodeLink[] = [
