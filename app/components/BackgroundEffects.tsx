@@ -95,6 +95,8 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
     resize();
     window.addEventListener('resize', resize);
 
+    const isMobile = window.innerWidth < 640;
+
     // Sakode Brand Color Palette
     const sakodePalette = [
       { hex: '#009670', rgb: '0, 150, 112' },   // Green
@@ -107,9 +109,9 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
       { hex: '#f94052', rgb: '249, 64, 82' },   // Red
     ];
 
-    // Setup for Constellation Web
+    // Setup for Constellation Web (Mobile Optimized)
     const nodes: NodePoint[] = [];
-    const nodeCount = Math.floor(Math.min(window.innerWidth, 1400) / 20);
+    const nodeCount = Math.floor(Math.min(window.innerWidth, 1400) / (isMobile ? 32 : 20));
     for (let i = 0; i < nodeCount; i++) {
       const brandColor = sakodePalette[Math.floor(Math.random() * sakodePalette.length)];
       nodes.push({
@@ -125,11 +127,11 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
 
     // Setup for Matrix Code
     const columns: MatrixColumn[] = [];
-    const colCount = Math.floor(window.innerWidth / 24);
+    const colCount = Math.floor(window.innerWidth / (isMobile ? 30 : 24));
     const chars = '01SAKODE</>10';
     for (let i = 0; i < colCount; i++) {
       columns.push({
-        x: i * 24,
+        x: i * (isMobile ? 30 : 24),
         y: Math.random() * canvas.height,
         speed: Math.random() * 1.5 + 0.8,
         chars: Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]),
@@ -138,7 +140,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
 
     // Setup for 3D Starfield
     const stars: StarParticle[] = [];
-    const starCount = Math.floor(Math.min(window.innerWidth, 1200) / 10);
+    const starCount = Math.floor(Math.min(window.innerWidth, 1200) / (isMobile ? 22 : 10));
     for (let i = 0; i < starCount; i++) {
       const brandColor = sakodePalette[Math.floor(Math.random() * sakodePalette.length)];
       stars.push({
@@ -152,7 +154,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
 
     // Setup for Circuit Board
     const circuits: CircuitTrace[] = [];
-    const circuitCount = 35;
+    const circuitCount = isMobile ? 18 : 35;
     for (let i = 0; i < circuitCount; i++) {
       const brandColor = sakodePalette[Math.floor(Math.random() * sakodePalette.length)];
       circuits.push({
@@ -199,7 +201,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
 
       // --- Style 1: Thicker Multicolored Sakode Constellation Web ---
       if (bgStyle === 'constellation') {
-        const lineDist = 140;
+        const lineDist = isMobile ? 110 : 140;
 
         for (let i = 0; i < nodes.length; i++) {
           const n = nodes[i];
@@ -214,7 +216,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
           ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
           ctx.fillStyle = n.color;
           ctx.shadowColor = n.color;
-          ctx.shadowBlur = 8;
+          ctx.shadowBlur = isMobile ? 4 : 8;
           ctx.fill();
           ctx.restore();
 
@@ -302,7 +304,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
             ctx.globalAlpha = alpha;
             ctx.fillStyle = s.color;
             ctx.shadowColor = s.color;
-            ctx.shadowBlur = 6;
+            ctx.shadowBlur = isMobile ? 3 : 6;
             ctx.beginPath();
             ctx.arc(px, py, size, 0, Math.PI * 2);
             ctx.fill();
@@ -313,7 +315,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
 
       // --- Style 4: Cyber Waveform Optics ---
       if (bgStyle === 'waveform') {
-        const waveCount = 5;
+        const waveCount = isMobile ? 3 : 5;
         const strokeColor = isLight ? 'rgba(0, 150, 112, 0.25)' : 'rgba(113, 207, 254, 0.3)';
 
         for (let w = 0; w < waveCount; w++) {
@@ -323,7 +325,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
             : strokeColor;
           ctx.lineWidth = 1.5;
 
-          const baseHeight = canvas.height * (0.3 + w * 0.12);
+          const baseHeight = canvas.height * (0.3 + w * 0.15);
           for (let x = 0; x < canvas.width; x += 15) {
             const mDist = Math.hypot(x - mouseX, baseHeight - mouseY);
             const warp = mDist < 200 ? (1 - mDist / 200) * 45 : 0;
@@ -373,13 +375,13 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
 
       // --- Style 6: Galactic Spiral Vortex ---
       if (bgStyle === 'vortex') {
-        const vRadius = 180;
-        const pCount = 60;
+        const vRadius = isMobile ? 120 : 180;
+        const pCount = isMobile ? 35 : 60;
         for (let i = 0; i < pCount; i++) {
           const angle = time * 0.8 + (i * Math.PI * 2) / pCount;
           const r = (vRadius * (i + 1)) / pCount;
-          const px = mouseX + Math.cos(angle) * r;
-          const py = mouseY + Math.sin(angle) * r;
+          const px = (mouseX > 0 ? mouseX : canvas.width / 2) + Math.cos(angle) * r;
+          const py = (mouseY > 0 ? mouseY : canvas.height / 2) + Math.sin(angle) * r;
 
           const color = sakodePalette[i % sakodePalette.length].hex;
 
@@ -388,7 +390,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
           ctx.arc(px, py, 2.5, 0, Math.PI * 2);
           ctx.fillStyle = color;
           ctx.shadowColor = color;
-          ctx.shadowBlur = 8;
+          ctx.shadowBlur = isMobile ? 4 : 8;
           ctx.fill();
           ctx.restore();
         }
@@ -396,7 +398,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
 
       // --- Style 7: Cyber Hexagonal Hive ---
       if (bgStyle === 'hexgrid') {
-        const hexSize = 30;
+        const hexSize = isMobile ? 24 : 30;
         const hexWidth = hexSize * Math.sqrt(3);
         const hexHeight = hexSize * 2;
         const cols = Math.ceil(canvas.width / hexWidth) + 1;
@@ -406,7 +408,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
           for (let c = 0; c < cols; c++) {
             const hx = c * hexWidth + (r % 2 === 1 ? hexWidth / 2 : 0);
             const hy = r * hexHeight * 0.75;
-            const dist = Math.hypot(hx - mouseX, hy - mouseY);
+            const dist = Math.hypot(hx - (mouseX > 0 ? mouseX : canvas.width / 2), hy - (mouseY > 0 ? mouseY : canvas.height / 2));
 
             if (dist < 220) {
               const alpha = (1 - dist / 220) * 0.6;
@@ -431,14 +433,13 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
 
       // --- Style 8: Neon Rain Ripples ---
       if (bgStyle === 'raindrops') {
-        // Random ambient drops
-        if (Math.random() > 0.92) {
+        if (Math.random() > (isMobile ? 0.96 : 0.92)) {
           const brandColor = sakodePalette[Math.floor(Math.random() * sakodePalette.length)];
           ripples.push({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
             radius: 2,
-            maxRadius: Math.random() * 40 + 20,
+            maxRadius: Math.random() * 35 + 20,
             alpha: 0.75,
             color: brandColor.hex,
           });
@@ -495,7 +496,7 @@ export function BackgroundEffects({ theme = 'dark', bgStyle = 'constellation' }:
                 ? 'radial-gradient(circle, rgba(0, 150, 112, 0.1) 0%, rgba(0, 150, 112, 0) 70%)'
                 : 'radial-gradient(circle, rgba(113, 207, 254, 0.15) 0%, rgba(113, 207, 254, 0) 70%)',
             }}
-            className="absolute top-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none transition-transform duration-75 ease-out"
+            className="absolute top-0 left-0 w-[400px] h-[400px] rounded-full pointer-events-none transition-transform duration-75 ease-out hidden sm:block"
           />
         </>
       )}

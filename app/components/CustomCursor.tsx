@@ -36,6 +36,7 @@ interface Particle {
 
 export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCursorProps) {
   const [mounted, setMounted] = useState(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
   const [pos, setPos] = useState({ x: -100, y: -100 });
   const [vel, setVel] = useState({ x: 0, y: 0 });
   const [visible, setVisible] = useState(false);
@@ -47,7 +48,16 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
   useEffect(() => {
     setMounted(true);
 
-    if (cursorStyle === 'default') {
+    const isTouch = typeof window !== 'undefined' && (
+      'ontouchstart' in window || 
+      navigator.maxTouchPoints > 0 || 
+      window.matchMedia('(pointer: coarse)').matches ||
+      window.innerWidth < 640
+    );
+
+    setIsTouchDevice(isTouch);
+
+    if (isTouch || cursorStyle === 'default') {
       document.documentElement.classList.remove('custom-cursor-active');
       return;
     }
@@ -67,6 +77,9 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
     }
 
     const handleResize = () => {
+      const recheckTouch = window.innerWidth < 640 || window.matchMedia('(pointer: coarse)').matches;
+      setIsTouchDevice(recheckTouch);
+
       if (canvas) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -236,7 +249,7 @@ export function CustomCursor({ theme = 'dark', cursorStyle = 'lens' }: CustomCur
     };
   }, [theme, cursorStyle]);
 
-  if (!mounted || cursorStyle === 'default') return null;
+  if (!mounted || isTouchDevice || cursorStyle === 'default') return null;
 
   const isLight = theme === 'light';
   const speed = Math.min(Math.hypot(vel.x, vel.y), 40);
