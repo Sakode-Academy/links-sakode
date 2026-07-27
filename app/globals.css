@@ -19,6 +19,13 @@ body {
   overflow-x: hidden;
 }
 
+/* Hide default OS/Windows cursor on desktop fine pointer devices */
+@media (pointer: fine) {
+  html, body, a, button, input, select, textarea, [role="button"], .cursor-pointer, * {
+    cursor: none !important;
+  }
+}
+
 /* Hide scrollbar */
 .scrollbar-none::-webkit-scrollbar {
   display: none;

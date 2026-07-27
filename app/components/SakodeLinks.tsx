@@ -22,6 +22,7 @@ import { WhatsappIcon, InstagramIcon, TiktokIcon, WebsiteIcon, EmailIcon, Sakode
 import { WebsiteStatusModal } from './WebsiteStatusModal';
 import { QrModal } from './QrModal';
 import { BackgroundEffects } from './BackgroundEffects';
+import { CustomCursor } from './CustomCursor';
 
 type ThemeMode = 'dark' | 'light';
 
@@ -113,7 +114,9 @@ export function SakodeLinks() {
         isLight ? 'bg-zinc-100 text-zinc-900' : 'bg-zinc-950 text-zinc-100'
       }`}
     >
-      
+      {/* Custom Cursor + Meteor Trail */}
+      <CustomCursor theme={theme} />
+
       {/* Background Grid */}
       {!isLight && <BackgroundEffects />}
 
@@ -206,7 +209,7 @@ export function SakodeLinks() {
           variants={itemVariants}
           className="w-full flex flex-col items-center text-center mb-8"
         >
-          {/* Logo Card with Hover Scale */}
+          {/* Logo Card */}
           <motion.div 
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.97 }}
