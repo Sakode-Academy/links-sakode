@@ -17,13 +17,15 @@ import {
   Globe,
   Mail,
   Send,
-  MousePointer
+  MousePointer,
+  Palette
 } from 'lucide-react';
 import { WhatsappIcon, InstagramIcon, TiktokIcon, WebsiteIcon, EmailIcon, SakodeLogoSvg } from './Icons';
 import { WebsiteStatusModal } from './WebsiteStatusModal';
 import { QrModal } from './QrModal';
 import { CursorModal } from './CursorModal';
-import { BackgroundEffects } from './BackgroundEffects';
+import { BackgroundModal } from './BackgroundModal';
+import { BackgroundEffects, BackgroundStyle } from './BackgroundEffects';
 import { CustomCursor, CursorStyle } from './CustomCursor';
 
 interface DocumentWithViewTransition {
@@ -35,9 +37,13 @@ type ThemeMode = 'dark' | 'light';
 export function SakodeLinks() {
   const [theme, setTheme] = useState<ThemeMode>('dark');
   const [cursorStyle, setCursorStyle] = useState<CursorStyle>('lens');
+  const [bgStyle, setBgStyle] = useState<BackgroundStyle>('constellation');
+
   const [websiteModalOpen, setWebsiteModalOpen] = useState<boolean>(false);
   const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
   const [cursorModalOpen, setCursorModalOpen] = useState<boolean>(false);
+  const [bgModalOpen, setBgModalOpen] = useState<boolean>(false);
+
   const [copiedPage, setCopiedPage] = useState<boolean>(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
@@ -127,8 +133,8 @@ export function SakodeLinks() {
       {/* Custom Cursor Overlay */}
       <CustomCursor theme={theme} cursorStyle={cursorStyle} />
 
-      {/* Background Grid */}
-      {!isLight && <BackgroundEffects />}
+      {/* Background Interactive Effects */}
+      <BackgroundEffects theme={theme} bgStyle={bgStyle} />
 
       <motion.div 
         variants={containerVariants}
@@ -496,18 +502,33 @@ export function SakodeLinks() {
 
       </motion.div>
 
-      {/* Floating Action Button (FAB) for Desktop Custom Cursor Settings */}
-      <div className="hidden sm:block fixed bottom-6 right-6 z-40">
+      {/* Floating Action Button (FAB) Dock for Desktop Customization */}
+      <div className="hidden sm:flex fixed bottom-6 right-6 z-40 items-center gap-2">
         <motion.button
-          whileHover={{ scale: 1.08 }}
-          whileTap={{ scale: 0.92 }}
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
+          onClick={() => setBgModalOpen(true)}
+          className={`p-3 rounded-full border shadow-xl flex items-center gap-2 text-xs font-semibold cursor-pointer group ${
+            isLight 
+              ? 'bg-white border-zinc-300 text-zinc-800 hover:bg-zinc-50' 
+              : 'bg-zinc-900 border-zinc-800 text-zinc-200 hover:bg-zinc-800'
+          }`}
+          title="Pengaturan Gaya Latar Belakang"
+        >
+          <Palette className="w-4 h-4 text-cyan-500 group-hover:rotate-12 transition-transform" />
+          <span className="pr-1 text-xs">Gaya Latar</span>
+        </motion.button>
+
+        <motion.button
+          whileHover={{ scale: 1.06 }}
+          whileTap={{ scale: 0.94 }}
           onClick={() => setCursorModalOpen(true)}
           className={`p-3 rounded-full border shadow-xl flex items-center gap-2 text-xs font-semibold cursor-pointer group ${
             isLight 
               ? 'bg-white border-zinc-300 text-zinc-800 hover:bg-zinc-50' 
               : 'bg-zinc-900 border-zinc-800 text-zinc-200 hover:bg-zinc-800'
           }`}
-          title="Pengaturan Gaya Kursor (Khusus Desktop)"
+          title="Pengaturan Gaya Kursor Mouse"
         >
           <MousePointer className="w-4 h-4 text-emerald-500 group-hover:rotate-12 transition-transform" />
           <span className="pr-1 text-xs">Gaya Kursor</span>
@@ -552,6 +573,14 @@ export function SakodeLinks() {
         onClose={() => setCursorModalOpen(false)}
         cursorStyle={cursorStyle}
         onSelectCursor={(newStyle) => setCursorStyle(newStyle)}
+        theme={theme}
+      />
+
+      <BackgroundModal
+        isOpen={bgModalOpen}
+        onClose={() => setBgModalOpen(false)}
+        bgStyle={bgStyle}
+        onSelectBg={(newStyle) => setBgStyle(newStyle)}
         theme={theme}
       />
 
