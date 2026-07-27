@@ -34,7 +34,7 @@ type ThemeMode = 'dark' | 'light';
 
 export function SakodeLinks() {
   const [theme, setTheme] = useState<ThemeMode>('dark');
-  const [cursorStyle, setCursorStyle] = useState<CursorStyle>('meteor');
+  const [cursorStyle, setCursorStyle] = useState<CursorStyle>('lens');
   const [websiteModalOpen, setWebsiteModalOpen] = useState<boolean>(false);
   const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
   const [cursorModalOpen, setCursorModalOpen] = useState<boolean>(false);
@@ -124,7 +124,7 @@ export function SakodeLinks() {
         isLight ? 'bg-zinc-100 text-zinc-900' : 'bg-zinc-950 text-zinc-100'
       }`}
     >
-      {/* Custom Cursor + Meteor Trail (Z-Index 99999 in front of modals) */}
+      {/* Custom Cursor Overlay */}
       <CustomCursor theme={theme} cursorStyle={cursorStyle} />
 
       {/* Background Grid */}
@@ -182,21 +182,6 @@ export function SakodeLinks() {
 
           {/* Quick Actions */}
           <div className="flex items-center gap-2">
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.94 }}
-              onClick={() => setCursorModalOpen(true)}
-              className={`p-2.5 rounded-xl border transition-colors duration-300 cursor-pointer flex items-center gap-1.5 text-xs font-medium ${
-                isLight 
-                  ? 'bg-white border-zinc-200 text-zinc-700 hover:bg-zinc-100 hover:text-zinc-900 shadow-sm' 
-                  : 'bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white'
-              }`}
-              title="Ganti Gaya Kursor"
-            >
-              <MousePointer className="w-4 h-4 text-emerald-500" />
-              <span className="hidden sm:inline">Kursor</span>
-            </motion.button>
-
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.94 }}
@@ -510,6 +495,24 @@ export function SakodeLinks() {
         </motion.footer>
 
       </motion.div>
+
+      {/* Floating Action Button (FAB) for Desktop Custom Cursor Settings */}
+      <div className="hidden sm:block fixed bottom-6 right-6 z-40">
+        <motion.button
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
+          onClick={() => setCursorModalOpen(true)}
+          className={`p-3 rounded-full border shadow-xl flex items-center gap-2 text-xs font-semibold cursor-pointer group ${
+            isLight 
+              ? 'bg-white border-zinc-300 text-zinc-800 hover:bg-zinc-50' 
+              : 'bg-zinc-900 border-zinc-800 text-zinc-200 hover:bg-zinc-800'
+          }`}
+          title="Pengaturan Gaya Kursor (Khusus Desktop)"
+        >
+          <MousePointer className="w-4 h-4 text-emerald-500 group-hover:rotate-12 transition-transform" />
+          <span className="pr-1 text-xs">Gaya Kursor</span>
+        </motion.button>
+      </div>
 
       {/* Toast Alert */}
       <AnimatePresence>

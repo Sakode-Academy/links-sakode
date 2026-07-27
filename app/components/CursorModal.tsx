@@ -2,7 +2,18 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MousePointer, Sparkles, Circle, Crosshair, Monitor } from 'lucide-react';
+import { 
+  X, 
+  MousePointer, 
+  Sparkles, 
+  Circle, 
+  Crosshair, 
+  Monitor, 
+  Code, 
+  Eye, 
+  Droplet, 
+  Star 
+} from 'lucide-react';
 import { CursorStyle } from './CustomCursor';
 
 interface CursorModalProps {
@@ -29,25 +40,49 @@ export function CursorModal({
       id: 'meteor',
       title: 'Meteor Glow',
       desc: 'Kursor bercahaya dengan ekor percikan meteor berpendar',
-      icon: <Sparkles className="w-5 h-5 text-emerald-500" />,
+      icon: <Sparkles className="w-4 h-4 text-emerald-500" />,
     },
     {
       id: 'minimal',
       title: 'Minimal Ring',
       desc: 'Titik kursor bersih & follower ring tanpa ekor meteor',
-      icon: <Circle className="w-5 h-5 text-cyan-500" />,
+      icon: <Circle className="w-4 h-4 text-cyan-500" />,
     },
     {
       id: 'crosshair',
       title: 'Neon Crosshair',
       desc: 'Kursor ring target tech berpintal & garis silang presisi',
-      icon: <Crosshair className="w-5 h-5 text-pink-500" />,
+      icon: <Crosshair className="w-4 h-4 text-pink-500" />,
+    },
+    {
+      id: 'blob',
+      title: 'Fluid Liquid Blob',
+      desc: 'Kursor bentuk fluida cair yang membal & elastis saat bergerak',
+      icon: <Droplet className="w-4 h-4 text-sky-500" />,
+    },
+    {
+      id: 'lens',
+      title: 'Magnifier Glass',
+      desc: 'Lensa spotlight melingkar dengan efek kaca pembesar & warna terbalik',
+      icon: <Eye className="w-4 h-4 text-purple-500" />,
+    },
+    {
+      id: 'code',
+      title: 'Sakode Symbol </ >',
+      desc: 'Ikon simbol koding khas Sakode Academy melayang mengikutimu',
+      icon: <Code className="w-4 h-4 text-emerald-400" />,
+    },
+    {
+      id: 'sparkles',
+      title: 'Starry Dust Wand',
+      desc: 'Taburan bintang emas berpendar melayang di belakang kursor',
+      icon: <Star className="w-4 h-4 text-amber-500" />,
     },
     {
       id: 'default',
-      title: 'Default OS',
+      title: 'Default OS Cursor',
       desc: 'Gunakan kursor panah bawaan Windows / Sistem Operasi',
-      icon: <Monitor className="w-5 h-5 text-amber-500" />,
+      icon: <Monitor className="w-4 h-4 text-zinc-400" />,
     },
   ];
 
@@ -60,7 +95,7 @@ export function CursorModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 bg-black/65 backdrop-blur-sm"
         />
 
         {/* Modal Card */}
@@ -68,12 +103,12 @@ export function CursorModal({
           initial={{ opacity: 0, scale: 0.95, y: 10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 10 }}
-          className={`relative z-10 w-full max-w-sm rounded-2xl border p-6 shadow-2xl ${
+          className={`relative z-10 w-full max-w-md max-h-[85vh] rounded-2xl border p-5 sm:p-6 shadow-2xl flex flex-col ${
             isLight ? 'bg-white border-zinc-200 text-zinc-900' : 'bg-zinc-900 border-zinc-800 text-white'
           }`}
         >
           {/* Header */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between pb-3 border-b border-zinc-800/40">
             <div className="flex items-center gap-2">
               <div className={`p-2 rounded-lg border ${
                 isLight ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-zinc-800 border-zinc-700 text-emerald-400'
@@ -81,9 +116,9 @@ export function CursorModal({
                 <MousePointer className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base font-bold">Gaya Kursor Mouse</h2>
+                <h2 className="text-base font-bold">Gaya Kursor Desktop</h2>
                 <p className={`text-xs ${isLight ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  Pilih tampilan kursor untuk layar desktop
+                  8 Pilihan Kursor Interaktif
                 </p>
               </div>
             </div>
@@ -97,8 +132,8 @@ export function CursorModal({
             </button>
           </div>
 
-          {/* Options List */}
-          <div className="space-y-2.5 my-5">
+          {/* Options List Grid */}
+          <div className="overflow-y-auto space-y-2 py-4 px-0.5 max-h-[50vh] scrollbar-none">
             {options.map((opt) => {
               const isSelected = cursorStyle === opt.id;
               return (
@@ -108,14 +143,14 @@ export function CursorModal({
                     onSelectCursor(opt.id);
                     onClose();
                   }}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                  className={`w-full text-left p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-3 ${
                     isSelected
                       ? isLight
                         ? 'bg-emerald-50 border-emerald-500 shadow-sm'
                         : 'bg-emerald-950/40 border-emerald-500/80 shadow-sm'
                       : isLight
                         ? 'bg-zinc-50 border-zinc-200 hover:border-zinc-300'
-                        : 'bg-zinc-800/60 border-zinc-700/60 hover:border-zinc-600'
+                        : 'bg-zinc-800/50 border-zinc-700/50 hover:border-zinc-600'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -142,7 +177,7 @@ export function CursorModal({
           {/* Footer Note */}
           <div className="pt-3 border-t border-zinc-800/40 text-center">
             <p className={`text-[10px] ${isLight ? 'text-zinc-400' : 'text-zinc-500'}`}>
-              Pengaturan kursor berlaku khusus untuk layar perangkat desktop.
+              Gaya kursor kustom hanya aktif pada tampilan desktop web.
             </p>
           </div>
         </motion.div>
