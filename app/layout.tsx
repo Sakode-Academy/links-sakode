@@ -25,6 +25,9 @@ export const metadata: Metadata = {
   },
   description: descText,
   keywords: [
+    "Sakode",
+    "Kursus IT",
+    "Link Sakode",
     "Sakode Academy",
     "Masa Depan Digital Dimulai Dari Sini",
     "Sakode Garut",
@@ -83,6 +86,10 @@ export const metadata: Metadata = {
     images: [ogImageUrl],
     creator: "@sakodeacademy",
   },
+
+  verification: {
+    google: "155-pAihT85Kz_6JR51iIfhHn1pHxdH6RC5GA2jmz_k"
+  }
 };
 
 export default function RootLayout({
@@ -129,7 +136,7 @@ export default function RootLayout({
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
         <meta property="og:site_name" content="Sakode Academy" />
-        
+
         {/* Twitter Card Meta Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={titleText} />
@@ -141,7 +148,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body 
+      <body
         suppressHydrationWarning
         className="min-h-full flex flex-col bg-zinc-950 text-zinc-100 selection:bg-emerald-500 selection:text-zinc-950"
       >
