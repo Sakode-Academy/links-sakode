@@ -39,7 +39,7 @@ type ThemeMode = 'dark' | 'light';
 
 export function SakodeLinks() {
   const [theme, setTheme] = useState<ThemeMode>('dark');
-  const [cursorStyle, setCursorStyle] = useState<CursorStyle>('lens');
+  const [cursorStyle, setCursorStyle] = useState<CursorStyle>('default');
   const [bgStyle, setBgStyle] = useState<BackgroundStyle>('constellation');
 
   // Dynamic Content & Links State
